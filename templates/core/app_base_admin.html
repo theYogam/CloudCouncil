@@ -1,0 +1,22 @@
+{% extends "core/base_admin.html" %}
+{% load i18n cache auth_tokens %}
+
+{% block app_admin_nav %}
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="dashboard">
+            <a href="{% url 'ikwen:dashboard' %}">{% trans "Dashboard" %}</a>
+        </li>
+        <li role="presentation" class="profiles">
+            <a href="{% url 'council:profile_list' %}">{% trans "Profiles" %}</a>
+        </li>
+        <li role="presentation" class="taxes">
+            <a href="{% url 'billing:product_list' %}">{% trans "Taxes" %}</a>
+        </li>
+        <li role="presentation" class="paymentorders">
+            <a href="{% url 'council:paymentorder_list' %}">{% trans "Payment Orders" %}</a>
+        </li>
+        <li role="presentation" class="payments">
+            <a href="{% url 'billing:payment_list' %}">{% trans "Payments" %}</a>
+        </li>
+    </ul>
+{% endblock %}

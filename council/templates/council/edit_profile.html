@@ -1,0 +1,99 @@
+{% extends 'council/base.html' %}
+{% load i18n humanize static auth_tokens webdesign %}
+
+{% block title %}
+    <title>{% trans 'Edit your profile' %}</title>
+{% endblock %}
+{% block content %}
+    <div id="content" class="profile">
+        <h2 class="title main-title text-center">{% trans 'Edit your profile' %}</h2>
+        {% for msg in messages %}
+            <p class="success" style="padding: 9px">{{ msg }}</p>
+        {% endfor %}
+        {% if errors %}
+            <div class="error-report">
+                {{ errors }}
+            </div>
+        {% endif %}
+        <div class="container">
+            <form class="col-sm-6" style="float: none; margin: auto" method="post">{% csrf_token %}
+                <input type="hidden" id="id-member" name="member" value="{{ user.id }}">
+                <input type="hidden" id="id-type" name="type">
+                <div class="citizen">
+                    <h4 class="main-title" style="">{% trans "Citizen infos" %}</h4>
+                    <div class="form-group-sm">
+                        <label for="id-id_number">{% trans 'ID Number:' %}</label>
+                        <input id="id-id_number" type="text" class="input-md form-control" name="id_number">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="form-group-sm">
+                        <label for="id-location">{% trans 'Location:' %}</label>
+                        <div class="clearfix"></div>
+{#                        <input id="id-location" type="url" class="input-md form-control" name="location">#}
+                        <a href="{% url 'council:maps' %}" class="btn btn-sm btn-outline-success" style="margin: 10px 0">{% trans 'Set location' %}</a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <input type="hidden" name="lat" value="{{ request.GET.lat }}">
+                    <input type="hidden" name="lng" value="{{ request.GET.lng }}">
+                    <div class="clearfix"></div>
+                </div>
+                <div class="divider"></div>
+                <div class="merchant">
+                    <h4 class="main-title" style="">{% trans "Merchant" %}</h4>
+                    <div class="form-group-sm">
+                        <label for="id-taxpayer">{% trans 'Taxpayer:' %}</label>
+                        <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+{#                <div class="divider"></div>#}
+                <div class="business-man">
+                    <h4 class="main-title">{% trans 'Business man' %}</h4>
+                    <div class="form-group-sm">
+                        <label for="id-business_type">{% trans 'Business type:' %}</label>
+                        <select id="id-business_type" name="business_type" class="form-control">
+                            <option value="">-------</option>
+                            <option value="Provider">{% trans "Merchant" %}</option>
+                            <option value="Bank">{% trans "Financial Institution" %}</option>
+                            <option value="Logistics">{% trans "Logistics" %}</option>
+                        </select>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="form-group-sm">
+                        <label for="id-company_name">{% trans 'Company name:' %}</label>
+                        <input id="id-company_name" type="text" class="input-md form-control">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-sm-7" style="margin: auto; float: none">
+                    <button class="btn btn-sm btn-block btn-deep-blue">{% trans "Save" %}</button>
+                </div>
+
+                <div class="clearfix"></div>
+            </form>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        (() => {
+            let taxpayer = $('#id-taxpayer').val(),
+            companyName = $('#id-company_name').val(),
+            businessType = $('#id-business_type').val();
+            if (taxpayer !== ''){
+                $('#id-type').val('Merchant');
+            }
+            if (companyName!=='' || businessType!=='') {
+                $('#id-type').val('Provider');
+            }
+            if (taxpayer==='' && companyName===''){
+                $('#id-type').val('Citizen');
+            }
+        })()
+    </script>
+{% endblock %}

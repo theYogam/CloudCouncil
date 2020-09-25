@@ -1,0 +1,77 @@
+{% load i18n static humanize %}
+{% include 'core/snippets/spinner.html' %}
+<div class="profile-list row">
+    {% for obj in objects_page.object_list %}
+        <div class="col-sm-4 col-lg-3" id="{{ obj.id }}" data-id="{{ obj.id }}">
+            <div class="product {{ obj.status }} subtle-shade">
+                <div>
+                    <span class="image"
+                       style="background-image: url({% get_media_prefix %}{{ obj.image.small_name }});"></span>
+                </div>
+                <div>
+                    <strong class="name">{{ obj.name }}</strong>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="key-points">
+                    <div>
+                        <strong>{% trans "Duration" %} :</strong>
+                        <span>{{ obj.duration_text }}</span>
+                    </div>
+                    <div style="margin: 15px 0">
+                        <sup style="font-size: 13px">{{ currency_symbol }}</sup>
+                        <strong style="font-size: 25px">  {{ obj.cost|intcomma }}</strong>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+                <p class="about">
+                    {{ obj.short_description }}
+                </p>
+                <button class="btn btn-block btn-outline-success {% if user.is_authenticated %}payment-start{% else %}prompt-login{% endif %}"
+                        data-product-id="{{ obj.id }}" data-cost="{{ obj.cost }}">{% trans 'Pay' %}</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    {% endfor %}
+</div>
+{% include 'billing/snippets/modal_payment_options.html' %}
+<script>
+    (() => {
+       $('.prompt-login').click(() => {
+           let image = '{% static 'ikwen/img/prompt-login.jpeg' %}',
+               title = "{% trans "Login required" %}",
+               message = "{% trans "Please, you need to login to proceed so that we know who is paying." %}",
+               url = "{% url 'ikwen:sign_in' %}?next={% url 'home' %}";
+           ikwen.showNoticeDialog(image, title, message, url);
+       });
+       {#$('.payment-start').click((e) => {#}
+       {#    let amount = $(e.target).data('cost');#}
+       {#   $('#amount').val(amount);#}
+       {#});#}
+    })()
+</script>
+{#{% if objects_page.paginator.num_pages > 1 %}#}
+{#<ul class="pagination col-xs-12 col-sm-9">#}
+{#    {% if objects_page.paginator.num_pages > max_visible_page_count and page_range.0 >= max_visible_page_count  %}#}
+{#        <li class="page" data-val="first"><a href="javascript:;" aria-label="Previous"><span aria-hidden="true">«</span></a></li>#}
+{#    {% endif %}#}
+{#    {% for page in page_range %}#}
+{#        <li class="page{% if page == objects_page.number %} active{% endif %}" data-val="{{ page }}">#}
+{#            <a href="javascript:;">#}
+{#                {{ page }} {% if page == objects_page.number %}<span class="sr-only">(current)</span>{% endif %}#}
+{#            </a>#}
+{#        </li>#}
+{#    {% endfor %}#}
+{#    {% if objects_page.paginator.num_pages > max_visible_page_count and max_page < objects_page.paginator.num_pages %}#}
+{#        <li class="page{% if max_page == objects_page.paginator.num_pages %} disabled{% endif %}" data-val="-1"><a href="javascript:;" aria-label="Next"><span aria-hidden="true">»</span></a></li>#}
+{#    {% endif %}#}
+{#</ul>#}
+{#{% endif %}#}
+{#<div id="page-navigation" class="col-xs-12 col-sm-3" style="color: #3066b1">#}
+{#    {% if objects_page.paginator.num_pages > 1 %}#}
+{#        <p>{% blocktrans with count=objects_page.paginator.count start=objects_page.start_index end=objects_page.end_index %}#}
+{#            {{ start }} – {{ end }} of {{ count }} results{% endblocktrans %}</p>#}
+{#    {% else %}#}
+{#        <p>{% blocktrans with count=objects_page.paginator.count %}{{ count }} results{% endblocktrans %}</p>#}
+{#    {% endif %}#}
+{#</div>#}

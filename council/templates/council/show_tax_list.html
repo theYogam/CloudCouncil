@@ -1,0 +1,118 @@
+{% extends 'council/base.html' %}
+{% load i18n humanize static auth_tokens webdesign %}
+
+{% block page_title %}
+<title>{% trans 'Bafoussam council ' %} - ikwen CloudCouncil</title>
+{% endblock %}
+
+{% block content %}
+    <div id="top-notice-ctnr" style="display: none">
+        <span class="floating-notice has-shade" style="float: none; position: static"> Error goes here </span>
+    </div>
+    <div id="content">
+        <div class="banner" style="background-image: url({% static 'council/img/banner.jpg' %})">
+{#            <form id="edit-search" class="col-xs-12 col-sm-8 col-sm-offset-2 col-lg-6 col-lg-offset-3">#}
+{#                <input id="city" type="text" class="form-control" name="city" placeholder="{% trans "Search marketplace" %}">#}
+{#            </form>#}
+            <div class="clearfix"></div>
+        </div>
+        <div class="container-fluid">
+            <div id="#taxes">
+                <h3 class="main-title text-center" style="">{% trans "Pay your taxes..." %}</h3>
+                <div id="results" class="results-stage" style="margin-top: 4vh">
+                    {% include 'council/snippets/tax_list_results.html' %}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div style="margin: 150px 0">
+                <div class="col-sm-6">
+                    <h3 class="main-title">{% trans 'Digitalize your school and work easier together with Foulassi' %}</h3>
+                    <div class="description">
+                        {% blocktrans %}
+                            Built with the idea of collaborative and social platform,
+                            Foulassi lets staffs, teachers and parents connect and work together
+                            to manage the school and students through these following features:
+                        {% endblocktrans %}
+                        <ul>
+                            <li>{% trans 'Students follow up' %}</li>
+                            <li>{% trans 'Scores input by teachers' %}</li>
+                            <li>{% trans 'Online assignments' %}</li>
+                            <li>{% trans 'Report cards generation' %}</li>
+                            <li>{% trans 'Detailed Dashboard' %}</li>
+                            <li>{% trans 'Also enable to connect & Share students discipline and work with parents' %}</li>
+                        </ul>
+                    </div>
+                    <div class="row col-sm-6">
+                        <a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true" class=" btn btn-block btn-deep-blue action">{% trans 'Deploy now' %}</a>
+                    </div>
+                </div>
+                <div class="col-sm-6" style="background-image: url({% static 'council/img/foulassi-student-follow-up-xs.png' %}); background-size: cover; background-position: center; height: 500px; width: 600px; padding: 135px 15px">
+                    <img class="img-responsive visible-xs" src="{% static 'council/img/foulassi-student-follow-up-xs.png' %}" style="visibility: hidden">
+                    <h3 class="main-title visible-xs" style="visibility: hidden">{% trans 'Digitalize your school and work easier together with Foulassi' %}</h3>
+                    <div class="description visible-xs" style="visibility: hidden">
+                        {% blocktrans %}
+                            Built with the idea of collaborative and social platform,
+                            Foulassi lets staffs, teachers and parents connect and work together
+                            to manage the school and students through these following features:
+                        {% endblocktrans %}
+                        <ul>
+                            <li>{% trans 'Students follow up' %}</li>
+                            <li>{% trans 'Scores input by teachers' %}</li>
+                            <li>{% trans 'Online assignments' %}</li>
+                            <li>{% trans 'Report cards generation' %}</li>
+                            <li>{% trans 'Detailed Dashboard' %}</li>
+                            <li>{% trans 'Also enable to connect & Share students discipline and work with parents' %}</li>
+                        </ul>
+                    </div>
+                    <div class="row col-sm-6 visible-xs" style="visibility: hidden">
+                        <a href="?is_baf_council=true" target="_blank" class=" btn btn-block btn-deep-blue action" style="float: none; margin: auto;">{% trans 'Deploy now' %}</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="edit-profile">
+            <div class="container text-center inner">
+                <h3 class="main-title">{% trans 'Let the council of Bafoussam knows who you are' %}</h3>
+                <a href="{% url 'council:edit_profile' %}" class=" btn btn-sm btn-outline-success action">{% trans 'Edit your profile' %}</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="container-fluid" style="background: #fff">
+            <div style="padding: 100px 0;">
+                <div class="col-sm-6" style="background-image: url({% static 'council/img/online-shopping.jpg' %}); background-size: cover; background-position: center; height: 400px; width:600px">
+                    <img class="img-responsive visible-xs" src="{% static 'council/img/online-shopping.jpg' %}">
+                </div>
+                <div class="col-sm-6">
+                    <h3 class="main-title">{% trans 'Reach more customers and sell all your stocks with Tsunami' %}</h3>
+                    <div class="description">
+                        {% blocktrans %}
+                            Tsunami builds for you a persistent customer base and offers your products
+                            to this community via continuous automated Mail and SMS reminders.
+                            You should consider increasing your available stocks....
+                        {% endblocktrans %}
+                    </div>
+                    <div class="row col-sm-6">
+                        <a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank" class=" btn btn-block btn-deep-blue action">{% trans 'Deploy now' %}</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        (() => {
+            {% if request.GET.failed %}
+                ikwen.showFloatingNotice({% blocktrans with name=request.GET.name %}Payment failed{% endblocktrans %}, 'failed');
+            {% else %}
+                ikwen.showFloatingNotice({% blocktrans with name=request.GET.name %}You successfully paid your tax {{ name }}{% endblocktrans %});
+            {% endif %}
+        })()
+    </script>
+{% endblock %}
