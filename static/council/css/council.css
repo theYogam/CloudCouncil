@@ -18,6 +18,7 @@ body {background: #f8f6f6;}
 .main-title {font-weight: 900; font-size: 48px; margin: 25px 0 25px}
 .description, .description li {font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 18px; color: #445b75}
 .btn {font-weight: 600; font-size: 20px; padding: 10px 40px; height: 50px;  margin: 40px 0}
+label{margin-top: 20px}
 
 .failed {background-color: red; color: #f6f6f6}
 #nav-xs .show-search, #navbar-search {display: none}
@@ -32,7 +33,7 @@ body {background: #f8f6f6;}
 /*  background: linear-gradient(to right, #8e0e00, #1f1c18); !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!*/
 /*    height: inherit}*/
 
-#content.profile h4.main-title  {font-size: 34px; font-weight: 800}
+#content.profile h4.main-title  {font-size: 24px; font-weight: 800}
 #content.profile h2.title {margin: 100px auto}
 #content.profile .citizen, #content.profile .merchant {margin-bottom: 50px}
 #content.profile .divider {border-top-color: #8584844f}
@@ -112,6 +113,11 @@ footer {background: #f6f6f6; margin: 0; padding: 10px 30px}
 
 @media (max-width: 767px) {
     #content .container-fluid {padding: 0px 10px 0;}
+    #content .edit-profile .inner {margin-top: 0}
+    .description, .description li {text-align: justify}
+    .main-title {font-size: 32px; line-height: 40px}
+    .product {height: 550px}
+    .product .image {height: 165px;}
     .product-details .subscribe {margin-top: 20px;}
     .product-details .subscribe button {width: calc(100% - 40px)}
     .product-details .header {padding-bottom: 30px}

@@ -1,0 +1,38 @@
+{% extends 'core/change_object_base.html' %}
+{% load i18n humanize static auth_tokens %}
+
+{% block admin_content %}
+    <div id="admin-content" class="change-form">
+        <div class="container-fluid">
+            {% if errors %}<p class="alert alert-danger">{{ errors }}</p>{% endif %}
+            <form class="admin-form" method="post">{% csrf_token %}
+                <input type="hidden" name="label_field" value="{{ label_field }}" />
+                <input type="hidden" name="slug_field" value="{{ slug_field }}" />
+                {% include 'core/snippets/model_admin_form.html' %}
+                {% for media_obj in media_field_list %}
+                <div class="col-sm-4 col-lg-3" style="padding-left: 0; margin-right: 15px">
+                    <div>
+                    {% with media=media_obj %}
+                        {% include 'core/snippets/media_uploader_single.html' %}
+                    {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="form-group col-xs-12 col-sm-4 col-md-3" style="clear: both; padding-top: 15px">
+                    <a href="{% url 'council:profile_list' %}" class="btn btn-sm btn-primary btn-block">{% trans "OK" %}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{#    <script src="{% static 'ikwen/js/jquery.datetimepicker.full.js' %}"></script>#}
+    <script type="text/javascript">
+        (function() {
+            $('form.admin-form').find('input, select').attr('disabled', true);
+            $('div#admin-nav .{{ verbose_name_plural|slugify }}').addClass('active');
+        })()
+    </script>
+{% endblock %}

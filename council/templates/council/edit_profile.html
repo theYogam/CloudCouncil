@@ -21,26 +21,27 @@
                 <input type="hidden" id="id-type" name="type">
                 <div class="citizen">
                     <h4 class="main-title" style="">{% trans "Citizen infos" %}</h4>
-                    <div class="form-group-sm">
+                    <div class="form-group-md">
                         <label for="id-id_number">{% trans 'ID Number:' %}</label>
                         <input id="id-id_number" type="text" class="input-md form-control" name="id_number">
                         <div class="clearfix"></div>
                     </div>
-                    <div class="form-group-sm">
+                    <div class="form-group-md">
                         <label for="id-location">{% trans 'Location:' %}</label>
                         <div class="clearfix"></div>
-{#                        <input id="id-location" type="url" class="input-md form-control" name="location">#}
-                        <a href="{% url 'council:maps' %}" class="btn btn-sm btn-outline-success" style="margin: 10px 0">{% trans 'Set location' %}</a>
+                        <input id="id-location" type="hidden" class="input-md form-control" name="location">
+                        <span id="show-location" style="margin: 10px 0"></span>
+                        <a href="{% url 'council:maps' %}" class="set-location btn btn-sm btn-outline-success" style="margin: 10px 0; line-height: 25px">{% trans 'Set location' %}</a>
                         <div class="clearfix"></div>
                     </div>
-                    <input type="hidden" name="lat" value="{{ request.GET.lat }}">
-                    <input type="hidden" name="lng" value="{{ request.GET.lng }}">
+                    <input type="hidden" id="id-lat" name="lat" value="{{ request.GET.lat }}">
+                    <input type="hidden" id="id-lng" name="lng" value="{{ request.GET.lng }}">
                     <div class="clearfix"></div>
                 </div>
                 <div class="divider"></div>
                 <div class="merchant">
                     <h4 class="main-title" style="">{% trans "Merchant" %}</h4>
-                    <div class="form-group-sm">
+                    <div class="form-group-md">
                         <label for="id-taxpayer">{% trans 'Taxpayer:' %}</label>
                         <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer">
                         <div class="clearfix"></div>
@@ -50,7 +51,7 @@
 {#                <div class="divider"></div>#}
                 <div class="business-man">
                     <h4 class="main-title">{% trans 'Business man' %}</h4>
-                    <div class="form-group-sm">
+                    <div class="form-group-md">
                         <label for="id-business_type">{% trans 'Business type:' %}</label>
                         <select id="id-business_type" name="business_type" class="form-control">
                             <option value="">-------</option>
@@ -60,7 +61,7 @@
                         </select>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="form-group-sm">
+                    <div class="form-group-md">
                         <label for="id-company_name">{% trans 'Company name:' %}</label>
                         <input id="id-company_name" type="text" class="input-md form-control">
                         <div class="clearfix"></div>
@@ -88,12 +89,17 @@
             if (taxpayer !== ''){
                 $('#id-type').val('Merchant');
             }
-            if (companyName!=='' || businessType!=='') {
+            if (companyName !== '' || businessType !== '') {
                 $('#id-type').val('Provider');
             }
-            if (taxpayer==='' && companyName===''){
+            if (taxpayer === '' && companyName === ''){
                 $('#id-type').val('Citizen');
             }
+            $('#id-lat, #id-lng').on('change', () => {
+                let lat = $('#id-lat').val(), lng = $('#id-lng').val();
+                $('.set-location').val("{% trans 'Change location' %}");
+                $('#show-location, #id-location').val(lat + "," + lng);
+            });
         })()
     </script>
 {% endblock %}

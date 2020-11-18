@@ -4,7 +4,7 @@ import string
 from datetime import timedelta, datetime
 from threading import Thread
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 
@@ -26,6 +26,7 @@ from ikwen.core.models import Application, Service
 from ikwen.core.views import HybridListView, ChangeObjectBase
 from ikwen.core.utils import set_counters, increment_history_field, get_service_instance, get_mail_content, send_push
 from ikwen.billing.models import MoMoTransaction, MTN_MOMO
+from ikwen.billing.utils import get_next_invoice_number
 
 from ikwen.core.views import HybridListView, DashboardBase, ChangeObjectBase
 from ikwen.core.models import Service, Application, Config
@@ -33,8 +34,8 @@ from ikwen.core.utils import slice_watch_objects, rank_watch_objects, add_databa
     get_model_admin_instance, clear_counters, get_mail_content, XEmailMessage, add_event
 from ikwen.billing.invoicing.views import InvoiceDetail, Payment
 
-from council.models import PaymentOrder, Profile, Tax, Payment
-from council.admin import PaymentOrderAdmin, ProfileAdmin, TaxAdmin, PaymentAdmin
+from council.models import PaymentOrder, Profile, Tax, Payment, Banner
+from council.admin import PaymentOrderAdmin, ProfileAdmin, TaxAdmin, PaymentAdmin, BannerAdmin
 
 logger = logging.getLogger('ikwen')
 
@@ -56,6 +57,7 @@ class Home(HybridListView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         config = get_service_instance().config
+        context['banner'] = Banner.objects.first()
         context['currency_symbol'] = config.currency_symbol
         return context
 
@@ -70,6 +72,16 @@ class TaxList(HybridListView):
     model_admin = TaxAdmin
 
 
+class ChangeBanner(ChangeObjectBase):
+    model = Banner
+    model_admin = BannerAdmin
+
+
+class BannerList(HybridListView):
+    model = Banner
+    model_admin = BannerAdmin
+
+
 class PaymentOrderList(HybridListView):
     model = PaymentOrder
     model_admin = PaymentOrderAdmin
@@ -80,7 +92,16 @@ class Receipt(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(Receipt, self).get_context_data(**kwargs)
-        receipt_id = kwargs.get('receipt_id')
+        config = get_service_instance().config
+        receipt_id = self.kwargs.get('receipt_id')
+        try:
+            payment = Payment.objects.select_related('tax', 'member').get(pk=receipt_id)
+        except Payment.DoesNotExist:
+            raise Http404("Payment not found")
+        context['currency_symbol'] = config.currency_symbol
+        context['payment'] = payment
+        context['amount'] = payment.tax.cost
+        context['payment_number'] = get_next_invoice_number()
         return context
 
 
@@ -105,11 +126,16 @@ class EditProfile(ChangeObjectBase):
     model = Profile
     model_admin = ProfileAdmin
 
+    def after_save(self, request, obj):
+        # context = self.get_context_data(**kwargs)
+        return HttpResponseRedirect(reverse('home') + "?profile_created=yes")
 
-class ViewProfile(ChangeObjectBase):
+
+class ChangeProfile(ChangeObjectBase):
     model = Profile
+    model_admin = ProfileAdmin
     # model_admin = ProfileAdmin
-    # template_name = 'council/view_profile.html'
+    template_name = 'council/change_profile.html'
 
 
 class ProfileList(HybridListView):
@@ -132,7 +158,8 @@ def set_momo_payment(request, *args, **kwargs):
                 object_id=payment.id, task_id=signature, wallet=mean, username=request.user.username, is_running=True)
     notification_url = service.url + reverse('council:confirm_payment', args=(tx.id, signature))
     logger.debug(notification_url)
-    cancel_url = service.url + reverse('home') + "?status=failed"
+    cancel_url = service.url + reverse('home')
+
     return_url = service.url + reverse('council:receipt', args=(payment.id, ))
     gateway_url = getattr(settings, 'IKWEN_PAYMENT_GATEWAY_URL', 'http://payment.ikwen.com/v1')
     endpoint = gateway_url + '/request_payment'
@@ -207,6 +234,7 @@ def confirm_payment(request, *args, **kwargs):
     tax = payment.tax
     weblet = get_service_instance()
     payer = payment.member
+    profile_payer = Profile.objects.get(member=payer)
     set_counters(weblet)
     increment_history_field(weblet, 'turnover_history', tx.amount)
     increment_history_field(weblet, 'earnings_history', tx.amount)
@@ -232,6 +260,7 @@ def confirm_payment(request, *args, **kwargs):
                                             extra_context={'currency_symbol': config.currency_symbol,
                                                            'product': tax,
                                                            'payer': payer,
+                                                           'profile_payer': profile_payer,
                                                            'tx_date': tx.updated_on.strftime('%Y-%m-%d'),
                                                            'tx_time': tx.updated_on.strftime('%H:%M:%S')})
             sender = '%s <no-reply@%s>' % (weblet.project_name, weblet.domain)
@@ -250,8 +279,13 @@ def confirm_payment(request, *args, **kwargs):
 class Maps(TemplateView):
     template_name = 'council/maps.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(Maps, self).get_context_data(**kwargs)
+        context['settings'] = settings
+        return context
 
-def notify_outdated_payment_orders():
+
+def notify_outdated_payment_orders(request, *args, **kwargs):
     now = datetime.now()
     weblet = get_service_instance()
     config = weblet.config
@@ -265,12 +299,18 @@ def notify_outdated_payment_orders():
         html_content = get_mail_content(subject, template_name='council/mails/outdate_payment_orders_notice.html',
                                         extra_context={'currency_symbol': config.currency_symbol,
                                                        'payment_order': obj,
+                                                       'ref_id': obj.reference_id,
                                                        'provider': obj.provider,
-                                                       'due_date': obj.due_date.strftime('%Y-%m-%d')})
+                                                       'due_date': obj.due_date.strftime('%Y-%m-%d'),
+                                                       'issue_date': obj.created_on.strftime('%Y-%m-%d')})
         sender = '%s <no-reply@%s>' % (weblet.project_name, weblet.domain)
         msg = EmailMessage(subject, html_content, sender, [config.contact_email])
+        msg.cc = ["silatchomsiaka@gmail.com"]
         msg.content_subtype = "html"
         if getattr(settings, 'UNIT_TESTING', False):
             msg.send()
         else:
             Thread(target=lambda m: m.send(), args=(msg,)).start()
+    messages.success(request, _('Email sent'),)
+
+    return HttpResponseRedirect(reverse('home'))

@@ -9,7 +9,7 @@
 <!-- Forcing initial-scale shouldn't be necessary -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
 <!-- Use the latest (edge) version of IE rendering engine -->
-<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ subject }} - ikwen MarketPlace</title>
+<title style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >{{ subject }} - Bafoussam Council</title>
 <!-- The title tag shows in email notifications, like Android 4.4. -->
 
 
@@ -137,9 +137,11 @@ table.center-on-narrow {
     <td style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;" ><center style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;width:100%;" >
 
         <!-- Visually Hidden Preheader Text : BEGIN -->
-        <div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >{% blocktrans with product_name=product.name product_cost=product.cost|intcomma %}
-          New payment of {{ product_name }} / {{ product_cost }}. Payer details are the following:
-        {% endblocktrans%}</div>
+        <div style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family:'Myriad Pro','Lucida Sans Unicode' ,Verdana, Helvetica, Arial, sans-serif;" >
+            {% blocktrans with product_name=tax.name product_cost=tax.cost|intcomma %}
+                New payment of <strong>{{ currency_symbol }} {{ product_cost }}</strong> for {{ product_name }}. Payer details are the following:
+            {% endblocktrans%}
+        </div>
         <!-- Visually Hidden Preheader Text : END -->
 
         <div class="screen-display" style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:680px;background-color:#FFFFFF;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;box-shadow:0 5px 5px 0 #bfbfbf;margin-top:10px;" >
@@ -166,8 +168,8 @@ table.center-on-narrow {
           <!-- Email Header : END -->
 
 
-        <!-- Email Body : BEGIN -->
-        <table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFF" width="100%" style="max-width: 400px;">
+       <!-- Email Body : BEGIN -->
+        <table cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#FFF" width="100%">
             <!-- Hero Image, Flush : BEGIN -->
             <tr>
               <td class="full-width-image" align="center" style="padding:15px">
@@ -180,13 +182,13 @@ table.center-on-narrow {
 
 			<!-- 1 Column Text : BEGIN -->
             <tr>
-              <td bgcolor="#FFF" valign="middle" style="text-align: center; background-position: center center !important; background-size: cover !important;"><!--[if gte mso 9]>
+              <td bgcolor="#FFF" valign="middle" style="background-position: center center !important; background-size: cover !important;"><!--[if gte mso 9]>
                         <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:680px;height:175px; background-position: center center !important;">
                         <v:fill type="tile" src="assets/Hybrid/Image_680x230.png" color="#222222" />
                         <v:textbox inset="0,0,0,0">
                         <![endif]-->
 
-                <p>
+                <div>
                   <!--[if mso]>
                             <table border="0" cellspacing="0" cellpadding="0" align="center" width="500">
                             <tr>
@@ -198,25 +200,25 @@ table.center-on-narrow {
                          <div style="padding: 15px;">
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
                                 {% blocktrans with product_name=product.name product_cost=product.cost|intcomma %}
-                                  New payment of {{ product_name }} / {{ product_cost }}. Payer details are the following:
+                                    New payment of {{ product_name }} at <strong>{{ currency_symbol }} {{ product_cost }}</strong>. Payer details are the following:
                                 {% endblocktrans%}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Payer name" %}:</strong> payer.full_name|capfirst
+                                <strong>{% trans "Payer name" %}:</strong> {{ payer.full_name|capfirst }}
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Email" %}:</strong> payer.email
+                                <strong>{% trans "Email" %}:</strong> {{ payer.email }}payer.email
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Phone" %}:</strong> payer.phone
+                                <strong>{% trans "Phone" %}:</strong>{{ payer.phone }} payer.phone
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Date" %}:</strong> tx_date tx_time
+                                <strong>{% trans "Date" %}:</strong> {{ tx_date }} {{ tx_time }}
                               </p>
+
                          </div>
     </td>
                     </tr>
                 </table>
-
                   <!--[if (gte mso 9)|(IE)]>
                             </td>
                             </tr>

@@ -186,8 +186,8 @@
                     pos = {lat: latitude, lng: longitude};
                     map.panTo(marker.getPosition());
 
-                    $('input[name=customer_lat]').val(latitude);
-                    $('input[name=customer_lng]').val(longitude);
+                    $('input[name=lat]').val(latitude);
+                    $('input[name=lng]').val(longitude);
 
                     infowindow.open(map, marker);
                     locationResolve(geocoder, pos);
@@ -198,11 +198,11 @@
             }
             else if (localStorage.getItem('Location')) {
                 let retrievedLocation = JSON.parse(localStorage.getItem('Location'));
-                $('input[name=customer_lat]').val(retrievedLocation['Latitude']);
-                $('input[name=customer_lng]').val(retrievedLocation['Longitude']);
+                $('input[name=lat]').val(retrievedLocation['Latitude']);
+                $('input[name=lng]').val(retrievedLocation['Longitude']);
                 pos = {
-                    lat: parseFloat($('input[name=customer_lat]').val()),
-                    lng: parseFloat($('input[name=customer_lng]').val())
+                    lat: parseFloat($('input[name=lat]').val()),
+                    lng: parseFloat($('input[name=lng]').val())
                 };
                 locationResolve(geocoder, pos);
 
@@ -226,8 +226,8 @@
                     pos = {lat: latitude, lng: longitude};
                     map.panTo(marker.getPosition());
 
-                    $('input[name=customer_lat]').val(latitude);
-                    $('input[name=customer_lng]').val(longitude);
+                    $('input[name=lat]').val(latitude);
+                    $('input[name=lng]').val(longitude);
 
                     infowindow.open(map, marker);
                     locationResolve(geocoder, pos);
@@ -256,8 +256,8 @@
                     animation: google.maps.Animation.BOUNCE,
                     title: 'Here you are'
                 });
-                $('input[name=customer_lat]').val(pos.lat);
-                $('input[name=customer_lng]').val(pos.lng);
+                $('input[name=lat]').val(pos.lat);
+                $('input[name=lng]').val(pos.lng);
                 {#autoCenter();#}
                 marker.addListener('click', function() {
                     stopBounce();
@@ -274,8 +274,8 @@
                     pos = {lat: latitude, lng: longitude};
                     map.panTo(marker.getPosition());
 
-                    $('input[name=customer_lat]').val(latitude);
-                    $('input[name=customer_lng]').val(longitude);
+                    $('input[name=lat]').val(latitude);
+                    $('input[name=lng]').val(longitude);
 
                     infowindow.open(map, marker);
                     locationResolve(geocoder, pos);
@@ -311,8 +311,8 @@
                     pos = {lat: latitude, lng: longitude};
                     map.panTo(marker.getPosition());
 
-                    $('input[name=customer_lat]').val(latitude);
-                    $('input[name=customer_lng]').val(longitude);
+                    $('input[name=lat]').val(latitude);
+                    $('input[name=lng]').val(longitude);
 
                     infowindow.open(map, marker);
                     locationResolve(geocoder, pos);
@@ -344,8 +344,8 @@
         $(document.body).on('click', '.set-position', function () {
             map.setZoom(18);
             let savedLocation = {
-              "Latitude": $('input[name=customer_lat]').val(),
-              "Longitude": $('input[name=customer_lng]').val()
+              "Latitude": $('input[name=lat]').val(),
+              "Longitude": $('input[name=lng]').val()
             };
             let savedFormattedAddress = $('input[name=formatted_address]').val();
             localStorage.setItem('Location', JSON.stringify(savedLocation));
@@ -358,8 +358,8 @@
         $(document.body).on('click', '.update-position', function () {
             map.setZoom(18);
             let updatedLocation = {
-              "Latitude": $('input[name=customer_lat]').val(),
-              "Longitude": $('input[name=customer_lng]').val()
+              "Latitude": $('input[name=lat]').val(),
+              "Longitude": $('input[name=lng]').val()
             };
             {#$("input[name=human_address]").val().replace("Current location: ", "");#}
             let updatedFormattedAddress = $("input[name=formatted_address]").val();
@@ -367,11 +367,10 @@
             localStorage.setItem('FormattedAddress', updatedFormattedAddress);
             ikwen.showFloatingNotice("{% trans 'Location updated successfully!'%}", '', 3);
             $('#set-location').submit();
-            setTimeout(redirect, 2000);
+            {#setTimeout(redirect, 2000);#}
 
         });
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}">
-    </script>
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGU-6-JeJW9oa5D8WSIsFXK-aN9CwHqI&callback=initMap"></script>
 {% endblock %}

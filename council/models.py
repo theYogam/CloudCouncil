@@ -10,6 +10,7 @@ from ikwen.core.utils import slice_watch_objects, rank_watch_objects, add_databa
     get_model_admin_instance, clear_counters, get_mail_content, XEmailMessage, add_event
 
 from ikwen.core.models import Model, AbstractConfig, Service
+from ikwen.core.fields import MultiImageField, FileField
 # from ikwen.core.constants import PAYMENT_STATUS_CHOICES
 from ikwen.accesscontrol.models import Member
 
@@ -80,7 +81,7 @@ class Profile(Model):
     member = models.ForeignKey(Member)
     type = models.CharField(_('Type'), max_length=100, choices=TYPES)
     location = models.CharField(_('GPS location'), max_length=100, blank=True, null=True)
-    id_number = models.CharField(_('ID Card Number'), max_length=100,)
+    id_number = models.CharField(_('ID Card Number'), max_length=100)
     taxpayer = models.CharField(_('Taxpayer Number'),  max_length=100, blank=True, null=True)
     business_type = models.CharField(_('Business Type'), max_length=100, blank=True, null=True)
     company_name = models.CharField(_('Company Name'), max_length=100, blank=True, null=True)
@@ -89,3 +90,8 @@ class Profile(Model):
         return "%s: %s" % (self.type, self.member.full_name)
 
 
+class Banner(Model):
+    UPLOAD_TO = 'Banner'
+    title_header = models.CharField(_("Title's header"), blank=True, null=True)
+    image = MultiImageField(_('Banner image'), allowed_extensions=['jpeg', 'png', 'jpg'],
+                            upload_to=UPLOAD_TO, required_width=1920, null=True)

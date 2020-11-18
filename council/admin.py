@@ -23,3 +23,8 @@ class TaxAdmin(admin.ModelAdmin):
 
 class PaymentAdmin(admin.ModelAdmin):
     fields = ('member', 'tax', 'status')
+
+
+class BannerAdmin(admin.ModelAdmin):
+    fields = ('title_header',)
+

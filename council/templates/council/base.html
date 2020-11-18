@@ -3,7 +3,7 @@
 
 {% block head_style %}
     {{ block.super }}
-    <link rel='stylesheet' href="{% static 'council/css/council.css' %}?v=23.10.20" />
+    <link rel='stylesheet' href="{% static 'council/css/council.css' %}?v=20.11.18-17.22" />
     <style>
         @media (max-width: 767px) {
             {% if config.brand_color %}#navbar {background: {{ config.brand_color }}}{% endif %}
@@ -18,7 +18,7 @@
         <ul class="dropdown-menu" aria-labelledby="user-menu">
             <li style="padding: 3px 20px"> {{ user.get_short_name }} </li>
             <li role="separator" class="divider"></li>
-            <li><a href="{% url "ikwen:staff_router" %}">{% trans "Admin" %}</a></li>
+            {% if user.is_staff %}<li><a href="{% url "ikwen:staff_router" %}">{% trans "Admin" %}</a></li>{% endif %}
             <li>
                 <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
             </li>
@@ -34,6 +34,7 @@
         <ul class="dropdown-menu" aria-labelledby="user-menu-xs">
             <li style="padding: 3px 20px"> {{ user.get_short_name }} </li>
             <li role="separator" class="divider"></li>
+            {% if user.is_staff %}<li><a href="{% url "ikwen:staff_router" %}">{% trans "Admin" %}</a></li>{% endif %}
             <li>
                 <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
             </li>
@@ -48,18 +49,21 @@
                 <div class="stage">
                     <div class="top-edge-panel" style>
                         <div class="panel-top">
-                        <img src="{% static 'ebonixe/img/ebonixe-logo-222x100.png' %}" class="img-responsive text-center" style="margin:auto; width: 60%">
+                        <img src="{% static 'ikwen/img/New-logo-ikwen-mail_200x49.png' %}" class="img-responsive text-center" style="margin:auto; width: 60%">
                     </div>
                     <div class="divider"></div>
                         <ul class="nav nav-pills nav-stacked">
                             <li><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                            {% if user.is_staff %}<li><a href="{% url "ikwen:staff_router" %}">{% trans "Admin" %}</a></li>{% endif %}
                             <li><a href="{% url 'flatpage' 'about' %}">{% trans 'About' %}</a> </li>
                             <li><a href="{% url 'flatpage' 'contact' %}">{% trans 'Contact' %}</a> </li>
+                            <li><a href="{% url "ikwen:logout" %}">{% trans "Logout" %}</a> </li>
                             {% if agreement_url %}
                                 <li>
                                     <a href="{{ agreement_url }}">{% trans 'Terms & conditions' %}</a>
                                 </li>
                             {% endif %}
+
                             <div class="text-right">
                                 {% include 'core/snippets/language_switcher.html' %}
                             </div>
@@ -78,7 +82,7 @@
                     </div>
                 </div>
 
-                <div class="footer">
+                <div class="footer" style="position: absolute">
                     &copy; {{ year }} <a class="company-name" href="{{ service.url }}"><strong>{{ config.company_name }}</strong></a>.
                     {% trans "All rights reserved." %}
                     {% if config.legal_mentions_url %}
