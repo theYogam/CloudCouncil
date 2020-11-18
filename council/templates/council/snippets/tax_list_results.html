@@ -27,7 +27,7 @@
                 <p class="about">
                     {{ obj.short_description }}
                 </p>
-                <button class="btn btn-block btn-outline-success {% if user.is_authenticated %}payment-start{% else %}prompt-login{% endif %}"
+                <button class="btn btn-block btn-outline-success {% if user.is_authenticated %}{% if created_profile %}payment-start{% else %}create-profile{% endif %}{% else %}prompt-login{% endif %}"
                         data-product-id="{{ obj.id }}" data-cost="{{ obj.cost }}">{% trans 'Pay' %}</button>
             </div>
             <div class="clearfix"></div>
@@ -38,10 +38,17 @@
 <script>
     (() => {
        $('.prompt-login').click(() => {
-           let image = '{% static 'ikwen/img/prompt-login.jpeg' %}',
+           let image = '{% static 'ikwen/img/login-to-proceed.jpg' %}',
                title = "{% trans "Login required" %}",
                message = "{% trans "Please, you need to login to proceed so that we know who is paying." %}",
                url = "{% url 'ikwen:sign_in' %}?next={% url 'home' %}";
+           ikwen.showNoticeDialog(image, title, message, url);
+       });
+       $('.create-profile').click(() => {
+           let image = '{% static 'ikwen/img/create-profile.jpg' %}',
+               title = "{% trans "Profile required" %}",
+               message = "{% trans "Please, you need to create your profile so that we know who is paying." %}",
+               url = "{% url 'council:edit_profile' %}?next={% url 'home' %}";
            ikwen.showNoticeDialog(image, title, message, url);
        });
        {#$('.payment-start').click((e) => {#}
