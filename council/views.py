@@ -57,7 +57,11 @@ class Home(HybridListView):
     def get_context_data(self, **kwargs):
         context = super(Home, self).get_context_data(**kwargs)
         config = get_service_instance().config
-        context['created_profile'] = True if Profile.objects.filter(member=self.request.user) else False
+        created_profile = False
+        if self.request.user.is_authenticated():
+            if Profile.objects.filter(member=self.request.user):
+                created_profile = True
+        context['created_profile'] = created_profile
         context['banner'] = Banner.objects.first()
         context['currency_symbol'] = config.currency_symbol
         return context
