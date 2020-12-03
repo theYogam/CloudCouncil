@@ -24,6 +24,7 @@ from ikwen.conf.settings import WALLETS_DB_ALIAS
 from ikwen.core.constants import CONFIRMED
 from ikwen.core.models import Application, Service
 from ikwen.core.views import HybridListView, ChangeObjectBase
+from ikwen.core.templatetags.url_utils import strip_base_alias
 from ikwen.core.utils import set_counters, increment_history_field, get_service_instance, get_mail_content, send_push
 from ikwen.billing.models import MoMoTransaction, MTN_MOMO
 from ikwen.billing.utils import get_next_invoice_number
@@ -105,6 +106,7 @@ class Receipt(TemplateView):
             raise Http404("Payment not found")
         context['currency_symbol'] = config.currency_symbol
         context['payment'] = payment
+        context['member'] = self.request.user
         context['amount'] = payment.tax.cost
         context['payment_number'] = get_next_invoice_number()
         return context
@@ -161,11 +163,11 @@ def set_momo_payment(request, *args, **kwargs):
     tx = MoMoTransaction.objects.using(WALLETS_DB_ALIAS)\
         .create(service_id=service.id, type=MoMoTransaction.CASH_OUT, amount=product.cost, phone='N/A', model=model_name,
                 object_id=payment.id, task_id=signature, wallet=mean, username=request.user.username, is_running=True)
-    notification_url = service.url + reverse('council:confirm_payment', args=(tx.id, signature))
+    notification_url = reverse('council:confirm_payment', args=(tx.id, signature))
     logger.debug(notification_url)
-    cancel_url = service.url + reverse('home')
+    cancel_url = reverse('home')
 
-    return_url = service.url + reverse('council:receipt', args=(payment.id, ))
+    return_url = reverse('council:receipt', args=(payment.id, ))
     gateway_url = getattr(settings, 'IKWEN_PAYMENT_GATEWAY_URL', 'http://payment.ikwen.com/v1')
     endpoint = gateway_url + '/request_payment'
     user_id = request.user.username if request.user.is_authenticated() else '<Anonymous>'
@@ -173,9 +175,9 @@ def set_momo_payment(request, *args, **kwargs):
         'username': getattr(settings, 'IKWEN_PAYMENT_GATEWAY_USERNAME', service.project_name_slug),
         'amount': product.cost,
         'merchant_name': config.company_name,
-        'notification_url': notification_url,
-        'return_url': return_url,
-        'cancel_url': cancel_url,
+        'notification_url': service.url + strip_base_alias(notification_url),
+        'return_url': service.url + strip_base_alias(return_url),
+        'cancel_url': service.url + strip_base_alias(cancel_url),
         'user_id': user_id
     }
     try:
@@ -230,14 +232,14 @@ def confirm_payment(request, *args, **kwargs):
     tx.phone = phone
     tx.is_running = False
     tx.save()
-    mean = tx.wallet
     payment = Payment.objects.select_related('member', 'tax').get(pk=tx.object_id)
     payment.status = CONFIRMED
     payment.processor_tx_id = operator_tx_id
     payment.save()
 
     tax = payment.tax
-    weblet = get_service_instance()
+    weblet = get_service_instance(check_cache=False)
+    weblet.raise_balance(tx.amount, provider=tx.wallet)
     payer = payment.member
     profile_payer = Profile.objects.get(member=payer)
     set_counters(weblet)
@@ -245,19 +247,12 @@ def confirm_payment(request, *args, **kwargs):
     increment_history_field(weblet, 'earnings_history', tx.amount)
     increment_history_field(weblet, 'transaction_count_history')
 
-    try:
-        callback = import_by_path(tax.callback)
-        callback(tax, payer)  # Callback should send notification email, push, etc.
-    except:
-        logger.error("", exc_info=True)
-
-    council_weblet = get_service_instance()
     email = tax.email
-    config = council_weblet.config
+    config = weblet.config
     if not email:
         email = config.contact_email
     if not email:
-        email = council_weblet.member.email
+        email = weblet.member.email
     if email or payer.email:
         subject = _("Successful payment of %s" % tax.name)
         try:
@@ -277,7 +272,7 @@ def confirm_payment(request, *args, **kwargs):
             else:
                 Thread(target=lambda m: m.send(), args=(msg,)).start()
         except:
-            logger.error("%s - Failed to send notice mail to %s." % (council_weblet, email), exc_info=True)
+            logger.error("%s - Failed to send notice mail to %s." % (weblet, email), exc_info=True)
     return HttpResponse("Notification successfully received")
 
 

@@ -206,19 +206,19 @@
                             <div class="clearfix"></div>
                         </div>
                     {% endif %}
-                    <div class="details-header{% if payment.payment_set.all|length == 0 %} tpl{% endif %}"
+                    <div class="details-header{% if member.payment_set.all|length == 0 %} tpl{% endif %}"
                          style="background: none; border-top: 1px dashed #666; font-size: 1.35em; margin-top: 15px">
                         {% trans "Payments" %}
                     </div>
-                    <div class="details-header hidden-xs{% if payment.payment_set.all|length == 0 %} tpl{% endif %}" style="padding-left: 0; padding-right: 0">
+                    <div class="details-header hidden-xs{% if member.payment_set.all|length == 0 %} tpl{% endif %}" style="padding-left: 0; padding-right: 0">
                         <div class="col-sm-3">{% trans "Transaction date" %}</div>
                         <div class="col-sm-3">{% trans "Method" %}</div>
                         <div class="col-sm-3">{% trans "Transaction ID" %}</div>
                         <div class="col-sm-3 text-right">{% trans "Amount" %}</div>
                         <div class="clearfix"></div>
                     </div>
-                    {% if payment.payment_set.all|length > 0 %}
-                        {% for payment in payment.payment_set.all %}
+                    {% if member.payment_set.all|length > 0 %}
+                        {% for payment in member.payment_set.all %}
                             <div class="payment entry">
                                 <div class="col-sm-3">
                                     <div class="pull-left visible-xs">{% trans "Date" %}</div>

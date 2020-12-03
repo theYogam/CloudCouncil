@@ -40,7 +40,7 @@
 </div>
 <ul class="object-list list-group">
     {% for payment in objects_page.object_list %}
-        {% with invoice=payment.invoice %}
+        {% if payment.processor_tx_id %}
             {% url 'council:receipt' payment.id as obj_url %}
             <li class="ik-li list-group-item" id="{{ payment.id }}" data-id="{{ payment.id }}">
                 <a href="{{ obj_url }}">{{ payment.member }}</a>
@@ -56,7 +56,7 @@
                     {{ payment.created_on|date:"Y-m-d H:i" }}
                 </div>
             </li>
-        {% endwith %}
+        {% endif %}
     {% endfor %}
 </ul>
 {% if objects_page.paginator.num_pages > 1 %}
