@@ -198,7 +198,7 @@ table.center-on-narrow {
                          <div style="padding: 15px;">
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
                                 {% blocktrans with provider=provider.full_name amount=obj.amount %}
-                                  Dear administrative officers of <strong>Bafoussam council</strong>,
+                                  Dear administrative officers of <strong>{{ project_name }}</strong>,
                                     <br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >This is to inform you that the payment order of Ref N&deg;{{ ref_id }} - XAF
                                     <strong>{{ amount|intcomma }}</strong> for {{ provider }} issued on {{ issue_date }} is now
                                     out to date.

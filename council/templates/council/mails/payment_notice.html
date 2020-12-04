@@ -200,19 +200,19 @@ table.center-on-narrow {
                          <div style="padding: 15px;">
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
                                 {% blocktrans with product_name=product.name product_cost=product.cost|intcomma %}
-                                    New payment of {{ product_name }} at <strong>{{ currency_symbol }} {{ product_cost }}</strong>. Payer details are the following:
-                                {% endblocktrans%}</p><br style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+                                    New payment of {{ product_name }} at <strong>{{ currency_symbol }} {{ product_cost }}</strong>.<br> Payer details are the following:
+                                {% endblocktrans%}</p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Payer name" %}:</strong> {{ payer.full_name|capfirst }}
+                                <strong style="width: 60px">{% trans "Payer name" %}:</strong> {{ payer.full_name|capfirst }}
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Email" %}:</strong> {{ payer.email }}payer.email
+                                <strong style="width: 60px">{% trans "Email" %}:</strong> {{ payer.email }}
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Phone" %}:</strong>{{ payer.phone }} payer.phone
+                                <strong style="width: 60px">{% trans "Phone" %}:</strong> {{ payer.phone }}
                               </p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
-                                <strong>{% trans "Date" %}:</strong> {{ tx_date }} {{ tx_time }}
+                                <strong style="width: 60px">{% trans "Date" %}:</strong> {{ tx_date }} {{ tx_time }}
                               </p>
 
                          </div>

@@ -106,7 +106,7 @@ class Receipt(TemplateView):
             raise Http404("Payment not found")
         context['currency_symbol'] = config.currency_symbol
         context['payment'] = payment
-        context['member'] = self.request.user
+        context['member'] = payment.member
         context['amount'] = payment.tax.cost
         context['payment_number'] = get_next_invoice_number()
         return context
@@ -301,6 +301,7 @@ def notify_outdated_payment_orders(request, *args, **kwargs):
                                                        'payment_order': obj,
                                                        'ref_id': obj.reference_id,
                                                        'provider': obj.provider,
+                                                       'project_name': weblet.project_name,
                                                        'due_date': obj.due_date.strftime('%Y-%m-%d'),
                                                        'issue_date': obj.created_on.strftime('%Y-%m-%d')})
         sender = '%s <no-reply@%s>' % (weblet.project_name, weblet.domain)
