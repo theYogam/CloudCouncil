@@ -1,0 +1,55 @@
+{% load i18n humanize static cache %}
+<div class="edge-panel-left-container">
+    <div id="side-nav" class="edge-panel-left">
+        <div class="wrapper">
+            <div id="filter" class="">
+                <div class="header top">
+                    <h5 style="color: #696969; font-size: 20px">{{ service.project_name }}</h5>
+                </div>
+                <div class="filters" id="filtered">
+                    {% if cities %}
+                    <section class="cities">
+                        <div class="header" style="margin-top: 0">Cities</div>
+                        <div class="details">
+                            <ul>
+                                {% for city in cities %}
+                                <li class="city">
+                                    {% if request.user.is_superuser %}
+                                        <a href="#" class="criterion" data-city="{{ city.id }}"  data-lat='{{ city.latitude }}' data-lng="{{ city.longitude }}">{{ city.name }}</a>
+                                    {% else %}
+                                        <a href="#" class="criterion" data-lat='{{ city.latitude }}' data-lng="{{ city.longitude }}">{{ city.name }}</a>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </section>
+                    {% endif %}
+                    {% if show_operators %}
+                    <section class="Fibers">
+                        <div class="header">Operators</div>
+                        <div class="details" style="margin-left: 5px">
+                            {% for operator in operators %}
+                                <label class="checkbox" style="padding-left: 0">
+                                    <span class="color" style="background: {{ operator.fiber_color }}"></span><span class="op-name">{{ operator.name }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </section>
+                    {% endif %}
+                    <section class="Devices">
+                        <div class="header">{% trans 'Categories' %}</div>
+                        <div class="details">
+                            {% for category in categories %}
+                                <label class="checkbox">
+                                    <input data-categoryid="{{ category.id }}" checked type="checkbox" class="criterion devicecategory" value="{{ category.id }}">{{ category.name }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </section>
+                    <section id="dist-reload"></section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

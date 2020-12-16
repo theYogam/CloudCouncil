@@ -1,0 +1,242 @@
+{% load i18n staticfiles %}
+ <div id="lightbox" class="ik-hdn">
+{#    <div id="close">X</div>#}
+    <div class="wrapper">
+        <div class="dialog has-shade new-coordinate ik-hdn" style="width: 30%;">
+            <h2 style="" class="modal-title">{% trans "New coordinates" %}</h2>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <input id='latlongclicked' type="text" placeholder="Latitude;Longitude" style="border-radius: 2px;color:#343943; font-size: 12px; padding:4px 10px;width: 93%;">
+                <div class='controls' style="float: right; padding-top: 5px; width: 100%">
+                    <button class="btn validate btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right">Submit</button>
+                    <button class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: right; margin-right: 20px">Cancel</button>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="dialog has-shade new-device ik-hdn" style="margin-top: 5%;width: 500px;">
+            <h2 style=""  class="modal-title">{% trans "Add a new device" %}</h2>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <form role="form" id="equipment" style="margin-bottom: 10px;clear: both">{% csrf_token %}
+                    <input type="hidden" class="form-control longitude" name="longitude" >
+                    <input type="hidden" class="form-control latitude" name="latitude">
+                    <input type="hidden" class="form-control origin" name="origin">
+                    <input type="hidden" name="name" value="">
+                    <div class="form-group">
+                        <label for="type" style="font-size: 12px; font-weight: 700;">Type</label>
+                        <select class="form-control category" name="category" style="font-size: 12px;">
+                            <option value="">Select a type</option>
+                            {% for device in device_categories %}
+                                <option value="{{ device.id }}">{{ device.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="type" style="font-size: 12px; font-weight: 700;">Zone</label>
+                        <select class="form-control zone" name="zone" style="font-size: 12px;">
+                            <option value="">Select a zone</option>
+                            {% for zone in zones %}
+                                <option value="{{ zone.id }}">{{ zone.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="type" style="font-size: 12px; font-weight: 700;">Neighborhood</label>
+                        <select class="form-control neighborhood" name="neighborhood" style="font-size: 12px;">
+                            <option value="">Select a neighborhood</option>
+                            {% for neighborhood in neighborhoods %}
+                                <option value="{{ neighborhood.id }}">{{ neighborhood.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="client">
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Site code</label>
+                            <input type="text" class="site_code form-control" name="site_code">
+                        </div>
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Client code</label>
+                            <input type="text" class="client_code form-control" name="client_code">
+                        </div>
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Client name</label>
+                            <input type="text" class="client_name form-control" name="client_name">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="clear: both;float: left;margin-top: 22px;width: 100%;">
+                        <label for="type" style="font-weight: 700;font-size: 12px">Description</label>
+                        <textarea rows="4" class="desc" name="description" cols="5" style="font-size: 12px; resize: none;width: 445px"></textarea>
+                    </div>
+                    <div class="form-group" style="clear: both">
+                        <button type="submit" id="save-device" class="btn btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right">Submit</button>
+                        <button type="button" class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: right; margin-right: 20px">Cancel</button>
+                    </div>
+                </form>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="dialog has-shade new-event ik-hdn" style="border-radius: 5px;margin-top: 5%;max-width: 400px;">
+            <h2 style=""  class="modal-title">{% trans "Add a new event" %}</h2>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <form role="form" id="event" style="margin-bottom: 10px;clear: both">{% csrf_token %}
+                    <input type="hidden" name="name" value="">
+                    <input type="hidden" id="asset-id" name="asset-id" value="">
+                    <div class="form-group">
+                        <label for="type" style="font-size: 12px; font-weight: 700;">Type</label>
+                        <select class="form-control log-type input-sm" name="category" style="font-size: 12px;">
+                            <option value="">Select a type</option>
+                            {% for event_type in event_types %}
+                                <option value="{{ event_type.id }}">{{ event_type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group input-group">
+                        <label for="" style="font-size: 12px; font-weight: 700;width: 100%">{% trans "Name" %}</label>
+                        <input type="text" class="name form-control input-sm" name="name" style="width: 360px">
+                    </div>
+{#                    <div class="form-group input-group">#}
+{#                        <label for="" style="font-size: 12px; font-weight: 700;width: 100%">{% trans "Amount" %}</label>#}
+{#                        <input type="text" class="measure form-control input-sm" name="mesure" style="width: 360px">#}
+{#                    </div>#}
+
+                    <div class="form-group" style="clear: both;float: left;margin-top: 22px;width: 100%;">
+                        <label for="type" style="font-weight: 700;font-size: 12px">{% trans "Details" %}</label>
+                        <textarea rows="4" class="details" cols="5" name="description" style="border: solid 2px #dce4ec;border-radius: 3px;font-size: 12px; resize: none; width: 360px"></textarea>
+                    </div>
+                    <div class="form-group" style="clear: both">
+                        <button type="submit" id="save-event" class="btn btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right; width: 47%">Submit</button>
+                        <button type="button" class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: left; margin-right: 20px; width: 47%">Cancel</button>
+                    </div>
+                </form>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="modal dialog event-summary ik-hdn row">
+            <div class="close" style="float: right; margin-right: 10px; position: relative">X</div>
+            <h2 style=""  class="modal-title">{% trans 'Take a look on event details' %}</h2>
+            <div class="asset">
+                <strong>{% trans "Asset" %}</strong>:
+                <span></span>
+            </div>
+            <div class="title">
+                <strong>{% trans "Title" %}</strong>:
+                <span></span>
+            </div>
+            <div class="type">
+                <strong>{% trans "Type" %}</strong>:
+                <span></span>
+            </div>
+{#            <div class="measure">#}
+{#                <strong>{% trans "Event_type_label" %}</strong>:#}
+{#                <span></span>#}
+{#            </div>#}
+            <div class="details">
+                <strong>{% trans "Details" %}</strong>:
+                <span></span>
+            </div>
+            <div class="techie">
+                <strong>{% trans "Techie" %}</strong>:
+                <span></span>
+            </div>
+            <div class="created">
+                <strong>{% trans "Date" %}</strong>:
+                <span></span>
+            </div>
+        </div>
+
+        <div class="dialog has-shade notification ik-hdn" id="offline-asset" style="border: solid 1px #f10002; margin-top: 3%; max-height: 750px; overflow-x: hidden; overflow-y: auto;width: 800px;">
+            <div class="header subtle-shade">
+                <div class="close" style="float: right; margin-right: 10px; position: relative">X</div>
+                <h2 style=""  class="modal-title">{% trans "Equipments down" %}</h2>
+                <div class="filter">
+                    <div id="docsis" class="modems">
+                        <h6>DOCSIS: </h6>
+                        <div class="result">
+                            <span class="offline"></span>
+                            <span> / </span>
+                            <span class="total"></span>
+                        </div>
+                    </div>
+                    <div id="pon" class="modems">
+                        <h6>PON: </h6>
+                        <div class="result">
+                            <span class="offline"></span>
+                            <span> / </span>
+                            <span class="total"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter">
+                    <select>
+                        <option value="all">{% trans 'All' %}</option>
+                        {% for city in cities %}
+                            <option value="{{ city.name }}">{{ city.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="stage" style="padding: 10px 10px 6px; overflow-y: auto">
+                <table class="table table-striped table-bordered" id="offline-devices" style="">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">{% trans 'Equipments' %}</th>
+                            <th scope="col">{% trans 'City - Zone' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tpl" data-city="">
+                            <th scope="row" class="counter" style="width: 50px"></th>
+                            <td  data-pkey="" data-lat="" data-lng="" data-lng="" data-icon="" data-city="" class="device-name"></td>
+                            <td class="location" style="width: 200px"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <div class="dialog has-shade new-config ik-hdn" style="border-radius: 5px;margin-top: 5%; max-width: 600px; padding: 20px">
+            <h2 style=""  class="modal-title">{% trans "Device configurations" %}</h2>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <form role="form" id="configs" style="margin-bottom: 10px;clear: both">{% csrf_token %}
+                    <div id="configs-content" style="max-height: 65vh; overflow-y: auto">
+                        <input type="hidden" name="name" value="">
+                        <input type="hidden" id="asset-id" name="asset-id" value="">
+
+                        <div class="form-group row tpl custom-config">
+                            <div class="col-sm-5 col-md-5">
+                                <input class="form-control input-md title" type="text" placeholder="{% trans "Label" %}" />
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <input class="form-control input-md config-val" type="text" placeholder="{% trans "Configuration value" %}" />
+                            </div>
+                            <div class="col-sm-1 col-md-1">
+                                <i class="btn-icon remove-config fa fa-minus text-danger" style="font-size: 22px; line-height: 25px"></i>
+                            </div>
+                        </div>
+                        <div class="form-group row custom-config first">
+                            <div class="col-sm-5 col-md-5">
+                                <input class="form-control input-md title" type="text" name="item0" placeholder="{% trans "Label" %}" />
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <input class="form-control input-md config-val" type="text" name="config0" placeholder="{% trans "Configuration value" %}" />
+                            </div>
+                            <div class="col-sm-1 col-md-1">
+                                <i class="btn-icon add-config fa fa-plus text-success" style="font-size: 22px; line-height: 25px"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group action" style="clear: both">
+                        <button type="submit" id="save-config" class="btn btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right; width: 47%">Submit</button>
+                        <button type="button" class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: left; margin-right: 20px; width: 47%">Cancel</button>
+                    </div>
+                </form>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
