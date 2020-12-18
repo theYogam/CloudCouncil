@@ -8,9 +8,9 @@
     (function() {
         var markerCount = 0, map, city, zone, operator, deviceStatus, deviceCategory, searchVal ='',
             lastMarkerId, clickListener, liveDrawing, measuring, appLoaded = false,
-            PROSPECT_ICON = "{% static 'img/prospect.png' %}",
-            OFFLINE_PON_ICON = "{% static 'img/red-dot.png' %}",
-            OFFLINE_DOCSIS_ICON = "{% static 'img/red-triangle.png' %}";
+            PROSPECT_ICON = "{% static 'council/img/prospect.png' %}",
+            OFFLINE_PON_ICON = "{% static 'council/img/red-dot.png' %}",
+            OFFLINE_DOCSIS_ICON = "{% static 'council/img/red-triangle.png' %}";
         var mapsIntervalId = setInterval(function() {
             try {
                 infowindow = new google.maps.InfoWindow();
@@ -41,7 +41,7 @@
                 // Add new device to the map directly
                 var dbClickListener = google.maps.event.addListener(map,'dblclick',function(event) {
                     var lat = event.latLng.lat() , lng = event.latLng.lng();
-                    addMarkerToMap(lat, lng, '', 10, "{% static 'img/grey_pin.png' %}");
+                    addMarkerToMap(lat, lng, '', 10, "{% static 'council/img/grey_pin.png' %}");
                     document.getElementById('latlongclicked').value = lat + ';' + lng;
                     $('form#equipment input.latitude').val(lat);
                     $('form#equipment input.longitude').val(lng);
@@ -130,7 +130,7 @@
             }).hide()
         });
         $('form#line-search input#line-keyword').autocomplete({
-            serviceUrl: "{% url 'find_lines' %}",
+            serviceUrl: "{% url 'pinsview:find_lines' %}",
             //minChars: 2,
             appendTo: '#suggestions-for-lines',
             onSelect: function(suggestion) {
@@ -172,16 +172,16 @@
         }
 
         function loadAllEquipments(drawFibers) {
-             grabOfflineDevices()
-            if (liveDrawing || measuring) return;
-            var i, j,
+             grabOfflineDevices();
+             if (liveDrawing || measuring) return;
+             var i, j,
                 localFibers = localStorage.getItem("fiberlines"),
                 localDevices = localStorage.getItem("devices"),
                 offlineDevices = localStorage.getItem("offlineDevices"),
                 fiberBlocks = {{ fiber_blocks }},
                 deviceBlocks = {{ device_blocks }},
                 loadFromLS = false;
-                console.log(loadFromLS)
+                console.log(loadFromLS);
             {#if (!offlineDevices) offlineDevices = grabOfflineDevices()#}
 
             if (localFibers && localDevices) {
@@ -241,11 +241,12 @@
                     } catch (e) {}
                     if (!appLoaded) {
                         appLoaded = true;
+                        /*
                         setInterval(grabOfflineDevices, 300000);
                         setInterval(function () {
                             checkNewAsset();
                             updateLines()
-                        }, 60000);
+                        }, 60000);*/
                     }
                 }
                 {% if request.GET.lat and request.GET.lng %}
@@ -265,7 +266,7 @@
                 totalBlocks = fiberBlocks + deviceBlocks;
             $('.progress-rate').text('0 %');
             for (i=0; i<fiberBlocks; i++) {
-                $.getJSON('{% url 'grab_fibers' %}', {start: i * 50}, function(data) {
+                $.getJSON('{% url 'pinsview:grab_fibers' %}', {start: i * 50}, function(data) {
                     if (data.length > 0) {
                         if (localFiberData && localFiberData.length > 0) {
                             var end = localFiberData.length - 1;
@@ -287,7 +288,7 @@
             }
 
             for (i=0; i<deviceBlocks; i++) {
-                $.getJSON('{% url 'grab_devices' %}', {start: i * 50}, function(data) {
+                $.getJSON('{% url 'pinsview:grab_devices' %}', {start: i * 50}, function(data) {
                     if (localDeviceData && localDeviceData.length > 0) {
                         var end = localDeviceData.length - 1;
                         localDeviceData = localDeviceData.substr(0, end) + ',' + JSON.stringify(data).substring(1);
@@ -319,11 +320,12 @@
 
             if (blocksLoaded >= totalBlocks) {
                 appLoaded = true;
+                /*
                 setInterval(grabOfflineDevices, 300000);
                 setInterval(function() {
                     checkNewAsset();
                     updateLines()
-                }, 60000);
+                }, 60000);*/
             }
         }
 
@@ -333,7 +335,7 @@
                 if (marker.icon === OFFLINE_PON_ICON) marker.setMap(null);
             }
              $("#offline-devices tbody tr").not(".tpl").remove()
-             $.getJSON('{% url 'grab_offline_devices' %}', function(data) {
+             $.getJSON('{% url 'pinsview:grab_offline_devices' %}', function(data) {
                  var localOfflineDeviceData = JSON.stringify(data.devices);
                  localStorage.setItem("offlineDevices",localOfflineDeviceData);
                  var offlineDeviceList = [],
@@ -402,7 +404,7 @@
         $('form#search #keyword').keyup(function(){
             var query = $(this).val();
             if (query.length < 2) return;
-            var endpoint = "{% url 'search' %}";
+            var endpoint = "{% url 'pinsview:search' %}";
             var params = {format: 'json', query: query};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -676,7 +678,7 @@
             }
             var latitude = coords[0];
             var longitude = coords[1];
-            addMarkerToMap(latitude, longitude, '', 10, "{% static 'img/grey_pin.png' %}");
+            addMarkerToMap(latitude, longitude, '', 10, "{% static 'council/img/grey_pin.png' %}");
             var myLatlng = new google.maps.LatLng(latitude, longitude);
             map.panTo(myLatlng);
             closeLightbox();
@@ -785,7 +787,7 @@
             $('form#search').toggleClass('active')
         });
         function grabDeviveInformations(deviceId) {
-            var endpoint = "{% url 'grab_device_info' %}";
+            var endpoint = "{% url 'pinsview:grab_device_info' %}";
             var params = {format: 'json', deviceId:deviceId};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -865,7 +867,7 @@
 
 
         function grabAssetEvent(assetId) {
-            var endpoint = "{% url 'get_asset_event_log' %}";
+            var endpoint = "{% url 'pinsview:get_asset_event_log' %}";
             var params = {format: 'json', assetId:assetId};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -883,7 +885,7 @@
 
 
         function grabAssetConfig(assetId) {
-            var endpoint = "{% url 'grab_asset_config' %}", configs
+            var endpoint = "{% url 'pinsview:grab_asset_config' %}", configs
             var params = {assetId:assetId};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -1184,7 +1186,7 @@
                 return function() {
                     $('.gm-style-iw').parent().hide();
                     var htmlInfo = grabDeviveInformations(marker.deviceId);
-                    var endpoint = "{% url 'grab_device_info' %}";
+                    var endpoint = "{% url 'pinsview:grab_device_info' %}";
                     var params = {format: 'json', deviceId:deviceId};
                     $.getJSON(endpoint, params, function(data) {
                         var device = data.device;
@@ -1244,7 +1246,7 @@
                 pathStyle.setMap(map);
                 ikwen.polylines.push(pathStyle);
                 var fiberline = fiberLines[i]['fiberline'],
-                    endpoint = "{% url 'grab_fiber_info' %}";
+                    endpoint = "{% url 'pinsview:grab_fiber_info' %}";
                 google.maps.event.addListener(pathStyle, 'click', function(event) {
                     var params = {format: 'json', fiberId:this.fiberId};
 
@@ -1296,7 +1298,7 @@
 
     // Save Equipment using AJAX
         function saveEquipment(category, latitude, longitude, client_code, client_name, site_code, desc, zone, neighborhood) {
-            var endpoint = "{% url 'save_device' %}";
+            var endpoint = "{% url 'pinsview:save_device' %}";
             var params = {format: 'json', category: category, description:desc, latitude:latitude, longitude:longitude,
                 client_code:client_code, client_name:client_name, site_code:site_code, zone:zone, neighborhood:neighborhood };
             $('body, button').css('cursor','wait');
@@ -1324,7 +1326,7 @@
 
 
         function filterEquipments(params) {
-            var endpoint = "{% url 'filter_network_data' %}";
+            var endpoint = "{% url 'pinsview:filter_network_data' %}";
             var techieId = $('#techie-name').data('techieid');
             var current_user_lat = "{{ user_profile.city.latitude }}",
                 current_user_lng = "{{ user_profile.city.longitude }}";
@@ -1431,7 +1433,7 @@
 
 
         function changeDevicePosition(deviceId, latitude, longitude){
-            var endpoint = "{% url 'change_device_position' %}";
+            var endpoint = "{% url 'pinsview:change_device_position' %}";
             var params = {format: 'json', deviceId:deviceId, latitude: latitude, longitude:longitude};
             $('body, button').css('caursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -1514,7 +1516,7 @@
         }
 
         function getTechieInstallation(techieId) {
-            var endpoint = "{% url 'get_techie_installation' %}";
+            var endpoint = "{% url 'pinsview:get_techie_installation' %}";
             var params = {format: 'json', techieId: techieId};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -1534,7 +1536,7 @@
                             deviceId = devices[i].id,
                             zoom = devices[i].category.zoom;
                         if (devices[i].image)    photo = devices[i].image;
-                        else  photo = "{% static 'img/no_photo.png' %}";
+                        else  photo = "{% static 'council/img/no_photo.png' %}";
 
                         if (devices[i].category.icon) {
                             iconImg =  "{{ media_root }}" + devices[i].category.icon
@@ -1639,7 +1641,7 @@
 
         function saveAssetEvent(details, name, log_event_type_id, measure, asset_id) {
             var event_log = []
-            var endpoint = "{% url 'save_event_log' %}";
+            var endpoint = "{% url 'pinsview:save_event_log' %}";
             var params = {format: 'json', details: details, log_event_type_id:log_event_type_id, measure:measure, asset_id:asset_id, name:name};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -1675,7 +1677,7 @@
         }
 
         function saveLinePath(line, strCoords, distance, isUpdate) {
-            var endpoint = "{% url 'save_live_optical_fiber_coords' %}";
+            var endpoint = "{% url 'pinsview:save_live_optical_fiber_coords' %}";
             var params = {format: 'json', line: line, strCoords:strCoords, distance:distance};
             $('body, button').css('cursor','wait');
             $.getJSON(endpoint, params, function(data) {
@@ -1718,7 +1720,7 @@
                     path.push(event.latLng);
                 var distance = calculateDistance(path),
                 params = {format: 'json', fiberId:fiberId, distance:distance};
-                $.getJSON('{% url 'update_fibers_distance' %}', params, function(data) {
+                $.getJSON('{% url 'pinsview:update_fibers_distance' %}', params, function(data) {
 
                 });
 
@@ -1730,7 +1732,7 @@
 
         function checkNewAsset() {
             var poly = ikwen.fiberData;
-            $.getJSON('{% url 'check_new_fiber' %}', {'lastFiberId': lastFiberId}, function(resp) {
+            $.getJSON('{% url 'pinsview:check_new_fiber' %}', {'lastFiberId': lastFiberId}, function(resp) {
                 if (resp.length > 0) {
                     drawPoly(resp);
                     var newFiberData = poly.concat(resp);
@@ -1738,7 +1740,7 @@
                     lastFiberId = resp[0]['fiberline'].id
                 }
             });
-            $.getJSON('{% url 'check_new_device' %}',  {'lastDeviceId': lastDeviceId}, function(resp) {
+            $.getJSON('{% url 'pinsview:check_new_device' %}',  {'lastDeviceId': lastDeviceId}, function(resp) {
                 if (resp.length > 0){
                     var newDevices = [];
                     for (var j=0; j<resp.length; j++) {
@@ -1759,7 +1761,7 @@
 
             });
             var last_updated_log_id = localStorage.getItem("last_log_updated_id");
-            $.getJSON('{% url 'get_updated_fibers' %}',  {'last_updated_log_id': last_updated_log_id}, function(resp) {
+            $.getJSON('{% url 'pinsview:get_updated_fibers' %}',  {'last_updated_log_id': last_updated_log_id}, function(resp) {
 
                 if (resp.lines.length > 0){
                     var localFibers = JSON.parse(localStorage.getItem("fiberlines"));
@@ -1784,7 +1786,7 @@
         }
 
         function checkDataIntegrity() {
-            $.getJSON('{% url 'check_data_integrity' %}',  {'lastFiberId': lastFiberId}, function(resp) {
+            $.getJSON('{% url 'pinsview:check_data_integrity' %}',  {'lastFiberId': lastFiberId}, function(resp) {
                 if (resp.deleted_devices.length > 0){
                     var localDevices = JSON.parse(localStorage.getItem("devices"));
                     if (localDevices){
@@ -1841,7 +1843,7 @@
         function updateLines(){
             var fiberIds = grabFibersWithNoCoords();
             if (fiberIds){
-                $.getJSON('{% url 'check_line_update' %}',  {'fiberIds': fiberIds.toString()}, function(resp) {
+                $.getJSON('{% url 'pinsview:check_line_update' %}',  {'fiberIds': fiberIds.toString()}, function(resp) {
                     if (resp.length > 0){
                         var localFibers = JSON.parse(localStorage.getItem("fiberlines"));
                         for (var i = 0; i < resp.length; i++) {
@@ -1922,7 +1924,7 @@
                     localFibers.splice(j, 1);
                     ikwen.polylines[j].setMap(null);
                     infowindow.close();
-                    $.getJSON('{% url 'get_specific_fiber_data' %}', {'fiberId': pKey}, function(resp) {
+                    $.getJSON('{% url 'pinsview:get_specific_fiber_data' %}', {'fiberId': pKey}, function(resp) {
                         if (resp.length > 0) {
                             drawPoly(resp);
 

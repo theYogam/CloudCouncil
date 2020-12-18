@@ -1,10 +1,10 @@
-{% extends 'council/base.html' %}
+{% extends 'website/base.html' %}
 {% load i18n humanize static auth_tokens webdesign %}
 
 {% block title %}
     <title>{% trans 'Edit your profile' %}</title>
 {% endblock %}
-{% block content %}
+{% block page_content %}
     <div id="content" class="profile">
         <h2 class="title main-title text-center">{% trans 'Edit your profile' %}</h2>
         {% for msg in messages %}
@@ -15,27 +15,48 @@
                 {{ errors }}
             </div>
         {% endif %}
+
         <div class="container">
             <form class="col-sm-6" style="float: none; margin: auto" method="post">{% csrf_token %}
                 <input type="hidden" id="id-member" name="member" value="{{ user.id }}">
                 <input type="hidden" id="id-type" name="type">
                 <div class="citizen">
-                    <h4 class="main-title" style="">{% trans "Citizen infos" %}</h4>
+                    <h4 class="main-title" style="">{% trans "Citizen info" %}</h4>
                     <div class="form-group-md">
                         <label for="id-id_number">{% trans 'ID Number:' %}</label>
-                        <input id="id-id_number" type="text" class="input-md form-control" name="id_number">
+                        <input id="id-id_number" type="text" class="input-md form-control {% if obj.id_number %}disabled{% endif %}" name="id_number" {% if obj.id_number %}value="{{ obj.id_number }}"{% endif %}>
                         <div class="clearfix"></div>
                     </div>
                     <div class="form-group-md">
                         <label for="id-location">{% trans 'Location:' %}</label>
                         <div class="clearfix"></div>
-                        <input id="id-location" type="hidden" class="input-md form-control" name="location">
                         <span id="show-location" style="margin: 10px 0"></span>
-                        <a href="{% url 'council:maps' %}" class="set-location btn btn-sm btn-outline-success" style="margin: 10px 0; line-height: 25px">{% trans 'Set location' %}</a>
+                        {% if obj.formatted_address %}
+                            <p>
+                                <strong style="color: #0a4b3e">{{ obj.formatted_address }}</strong>
+                                <p style="font-size: 14px">
+                                    <span>{% trans "Do you wanna change it ?" %}</span>
+                                    <a href="{% url 'council:maps' %}" class="set-location" style="margin: 10px 0; line-height: 25px">{% trans 'Update location' %}</a>
+                                </p>
+                            </p>
+                        {% else %}
+                            {% if request.GET.lat %}
+                                <p>
+                                    <strong style="color: #0a4b3e">{{ request.GET.formatted_address }}</strong>
+                                    <p style="font-size: 14px">
+                                        <span>{% trans "Do you wanna change it ?" %}</span>
+                                        <a href="{% url 'council:maps' %}" class="set-location" style="margin: 10px 0; line-height: 25px">{% trans 'Update location' %}</a>
+                                    </p>
+                                </p>
+                            {% else %}
+                                <a href="{% url 'council:maps' %}" class="set-location btn btn-sm btn-outline-success" style="margin: 10px 0; line-height: 25px">{% trans 'Set location' %}</a>
+                            {% endif %}
+                        {% endif %}
                         <div class="clearfix"></div>
                     </div>
-                    <input type="hidden" id="id-lat" name="lat" value="{{ request.GET.lat }}">
-                    <input type="hidden" id="id-lng" name="lng" value="{{ request.GET.lng }}">
+                    <input type="hidden" id="id-lat" name="location_lat" value="{% if request.GET.lat %}{{ request.GET.lat }}{% else %}{% if obj.location_lat %}{{ obj.location_lat }}{% endif %}{% endif %}">
+                    <input type="hidden" id="id-lng" name="location_lng" value="{% if request.GET.lat %}{{ request.GET.lng }}{% else %}{% if obj.location_lng %}{{ obj.location_lng }}{% endif %}{% endif %}">
+                    <input type="hidden" id="id-formatted-address" name="formatted_address" value="{% if request.GET.formatted_address %}{{ request.GET.formatted_address }}{% else %}{% if obj.formatted_address %}{{ obj.formatted_address }}{% endif %}{% endif %}">
                     <div class="clearfix"></div>
                 </div>
                 <div class="divider"></div>
@@ -43,7 +64,7 @@
                     <h4 class="main-title" style="">{% trans "Merchant" %}</h4>
                     <div class="form-group-md">
                         <label for="id-taxpayer">{% trans 'Taxpayer:' %}</label>
-                        <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer">
+                        <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer" {% if obj.taxpayer %}value="{{ obj.taxpayer }}" {% endif %}>
                         <div class="clearfix"></div>
                     </div>
                     <div class="clearfix"></div>
@@ -54,16 +75,15 @@
                     <div class="form-group-md">
                         <label for="id-business_type">{% trans 'Business type:' %}</label>
                         <select id="id-business_type" name="business_type" class="form-control">
-                            <option value="">-------</option>
-                            <option value="Provider">{% trans "Merchant" %}</option>
-                            <option value="Bank">{% trans "Financial Institution" %}</option>
-                            <option value="Logistics">{% trans "Logistics" %}</option>
+                            {% for category in category_list %}
+                                <option value="{{ category.id }}" {% if obj.category %}selected {% else %} {% if forloop.counter == 1 %}selected{% endif %}{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
                         </select>
                         <div class="clearfix"></div>
                     </div>
                     <div class="form-group-md">
                         <label for="id-company_name">{% trans 'Company name:' %}</label>
-                        <input id="id-company_name" type="text" class="input-md form-control">
+                        <input id="id-company_name" type="text" class="input-md form-control" {% if obj.company_name %}value="{{ obj.company_name }}" {% endif %}>
                         <div class="clearfix"></div>
                     </div>
                     <div class="clearfix"></div>
@@ -83,22 +103,28 @@
     {{ block.super }}
     <script>
         (() => {
-            let taxpayer = $('#id-taxpayer').val(),
-            companyName = $('#id-company_name').val(),
-            businessType = $('#id-business_type').val();
+            let taxpayer = localStorage.getItem('taxpayer'),
+            companyName = localStorage.getItem('company_name'),
+            businessType = localStorage.getItem('business_type'),
+            idNumber = localStorage.getItem('id_number');
             if (taxpayer !== ''){
-                $('#id-type').val('Merchant');
+                $('#id-taxpayer').val(taxpayer);
             }
-            if (companyName !== '' || businessType !== '') {
-                $('#id-type').val('Provider');
+            if (companyName !== '') {
+                $('#id-company_name').val(companyName);
             }
-            if (taxpayer === '' && companyName === ''){
-                $('#id-type').val('Citizen');
+            if (idNumber !== ''){
+                $('#id-id_number').val(idNumber);
             }
-            $('#id-lat, #id-lng').on('change', () => {
-                let lat = $('#id-lat').val(), lng = $('#id-lng').val();
-                $('.set-location').val("{% trans 'Change location' %}");
-                $('#show-location, #id-location').val(lat + "," + lng);
+            if (businessType !== '') {
+                $('#id-business_type').val(businessType);
+            }
+            $('.set-location').on('click', () => {
+                localStorage.setItem("id_number", $('#id-id_number').val());
+                localStorage.setItem("taxpayer", $('#id-taxpayer').val());
+                localStorage.setItem("business_type", $('#id-business_type').val());
+                localStorage.setItem("company_name", $('#id-company_name').val());
+                return;
             });
         })()
     </script>

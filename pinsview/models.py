@@ -16,6 +16,8 @@ from copy import deepcopy
 import os
 from datetime import datetime
 # from ikwen.core.fields import MultiImageField
+from ikwen.accesscontrol.models import Member
+# from ikwen.core.models import Model
 
 
 def to_dict(var):
@@ -162,10 +164,10 @@ class Operator(models.Model):
 
 
 class UserProfile(models.Model):
-    member = models.OneToOneField(User)
+    member = models.OneToOneField(Member, null=True, blank=True)
     city = models.ManyToManyField(City, null=True, blank=True)
     zone = models.ManyToManyField(Zone, null=True, blank=True)
-    operator = models.ForeignKey(Operator)
+    operator = models.ForeignKey(Operator, null=True, blank=True)
 
     def __unicode__(self):
         return self.member.username
@@ -267,7 +269,7 @@ class DeviceCategory(models.Model):
         return var
 
 
-class Device(models.Model):
+class Device(Model):
     ONLINE = "online"
     OFFLINE = "offline"
     STATUS_CHOICES = (

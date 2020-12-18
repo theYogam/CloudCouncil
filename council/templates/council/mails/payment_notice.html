@@ -201,7 +201,7 @@ table.center-on-narrow {
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
                                 {% blocktrans with product_name=product.name product_cost=product.cost|intcomma %}
                                     New payment of {{ product_name }} at <strong>{{ currency_symbol }} {{ product_cost }}</strong>.<br> Payer details are the following:
-                                {% endblocktrans%}</p>
+                                {% endblocktrans %}</p>
                               <p style="-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#555;text-align:justify" >
                                 <strong style="width: 60px">{% trans "Payer name" %}:</strong> {{ payer.full_name|capfirst }}
                               </p>

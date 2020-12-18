@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^items/', include('ikwen_webnode.items.urls', namespace='items')),
     url(r'^echo/', include('echo.urls', namespace='echo')),
     url(r'^rewarding/', include('ikwen.rewarding.urls', namespace='rewarding')),
+    url(r'^pinsview/', include('pinsview.urls', namespace='pinsview')),
 
     url(r'^reporting/', include('ikwen_foulassi.reporting.urls', namespace='reporting')),
     url(r'^school/', include('ikwen_foulassi.school.urls', namespace='school')),

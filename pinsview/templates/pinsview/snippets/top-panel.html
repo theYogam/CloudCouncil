@@ -1,4 +1,4 @@
-{% load i18n staticfiles %}
+{% load i18n static %}
 <div id="top-panel" class="hidden-xs">
     <div id="search-box" class="subtle-shade">
         <div class="menu-button">
@@ -68,16 +68,16 @@
 <nav role="navigation" class="nav" style="top: -4px;">
     <ul class="nav-items">
         <li class="nav-item dropdown">
-            <a href="#" class="nav-link" style="background: url('{% static "img/user-icon.png" %}');background-size: 100% auto; background-repeat: no-repeat;height: 31px;margin: 0 4px; padding: 5px 14px;"></a>
+            <a href="#" class="nav-link" style="background: url('{% static "council/img/user-icon.png" %}');background-size: 100% auto; background-repeat: no-repeat;height: 31px;margin: 0 4px; padding: 5px 14px;"></a>
             <nav class="submenu">
                 <ul class="submenu-items">
                     <li class="submenu-item" style="font-weight: 700; font-size: 12px; margin-left: 10px; overflow: hidden; width: 87%;">{{ request.user }}</li>
                     <li class="submenu-item"><hr class="submenu-seperator" /></li>
-                    <li class="submenu-item"><a href="{% url 'admin:index' %}" class="submenu-link" target="_blank">Admin</a></li>
+                    <li class="submenu-item"><a href="{% url 'ikwen:staff_router' %}" class="submenu-link" target="_blank">Admin</a></li>
                     {% if request.user.is_superuser %}
-                    <li class="submenu-item"><a href="{% url 'statistic' %}" class="submenu-link">Stats</a></li>
+                    <li class="submenu-item"><a href="{% url 'pinsview:statistic' %}" class="submenu-link">Stats</a></li>
                     {% endif %}
-                    <li class="submenu-item"><a href="{% url 'logout' %}" class="submenu-link">Logout</a></li>
+                    <li class="submenu-item"><a href="{% url 'ikwen:logout' %}" class="submenu-link">Logout</a></li>
                 </ul>
             </nav>
         </li>

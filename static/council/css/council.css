@@ -15,9 +15,9 @@ body {background: #f8f6f6;}
 #content .edit-profile .inner {margin-top: 50px; float: none}
 #content .edit-profile .btn {border-color: #fff}
 #content .edit-profile .btn:hover {background-color: #fff; color: #8e0e00}
-.main-title {font-weight: 900; font-size: 48px; margin: 25px 0 25px}
+.main-title {font-weight: 900;font-size: 48px;margin: 25px 0 0px;text-indent: 0;}
 .description, .description li {font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 18px; color: #445b75}
-.btn {font-weight: 600; font-size: 20px; padding: 10px 40px; height: 50px;  margin: 40px 0}
+.btn {font-weight: 600;font-size: 20px;padding: 8px 40px;height: 45px;margin: 40px 0;}
 label{margin-top: 20px}
 
 .failed {background-color: red; color: #f6f6f6}
@@ -34,10 +34,11 @@ label{margin-top: 20px}
 /*    height: inherit}*/
 
 #content.profile h4.main-title  {font-size: 24px; font-weight: 800}
-#content.profile h2.title {margin: 100px auto}
+#content.profile h2.title {margin: auto;padding: 50px 0;}
 #content.profile .citizen, #content.profile .merchant {margin-bottom: 50px}
 #content.profile .divider {border-top-color: #8584844f}
 #content.profile .form-group-sm {margin: 10px 0}
+#content.profile form button {line-height: 25px}
 
 .footer {background: #da9a36; padding-top: 30px; color: #fff}
 .footer h3 {font-weight: 600}
@@ -69,12 +70,12 @@ footer {background: #f6f6f6; margin: 0; padding: 10px 30px}
     background: #fff;
     display: block;
     margin-bottom: 24px;
-    padding: 20px 25px;
     height: 320px;
     overflow: hidden;
 }
+.product .description {padding: 20px 15px}
 .product:hover {text-decoration: none;}
-.product .image {background: no-repeat center;background-size: cover;border-radius: 6px;height: 250px; width: 100%;display: block;overflow: hidden;}
+.product .image {background: no-repeat center;background-size: cover;height: 250px; width: 100%;display: block;overflow: hidden;}
 .product .name {height: 75px;display: block;font-size: 27px;margin-top: 20px;overflow: hidden;color: #0d47a1;}
 .product .key-points {clear: both;color: #103369;font-size: 14px;height: 45px;margin: 15px 0;}
 .product .about {color: #445b75;clear: both;height: 42px;font-size: 14px; margin: 20px 0; overflow: hidden;}

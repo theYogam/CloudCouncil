@@ -7,7 +7,7 @@
                     <h5 style="color: #696969; font-size: 20px">{{ service.project_name }}</h5>
                 </div>
                 <div class="filters" id="filtered">
-                    {% if cities %}
+                    {% if cities|length > 1 %}
                     <section class="cities">
                         <div class="header" style="margin-top: 0">Cities</div>
                         <div class="details">

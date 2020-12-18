@@ -166,7 +166,7 @@ class FiberAdmin(ImportExportMixin, admin.ModelAdmin):
 
 
 class DeviceCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'icon',)
+    list_display = ('name', 'description',)
 
 
 class UserProfileInline(admin.TabularInline):
@@ -180,67 +180,68 @@ class OperatorAdmin(admin.ModelAdmin):
 
 
 class DeviceAdmin(ImportExportMixin, admin.ModelAdmin):
-    resource_class = DeviceResource
-    list_display = ('name', 'operator', 'city', 'techie', 'created_on')
-    search_fields = ('name',)
-    list_select_related = ('category','operator', 'city', 'techie', 'neighborhood', 'zone')
-    list_filter = ('category', 'techie', 'zone')
-    actions = [activate_devices, 'delete_model']
+    fields = ('category', 'description', 'configuration', 'client_code', 'site_code', 'client_name',
+              'zone', 'name', 'city', 'techie', 'latitude', 'longitude', 'created_on', 'last_update')
 
-    def get_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return ('name', 'description', 'category', 'photo', 'operator',
-                    'city', 'techie', 'latitude', 'longitude', 'created_on', 'last_update')
-        return ('name', 'description', 'category', 'photo', 'city',
-                'techie', 'latitude', 'longitude', 'created_on', 'last_update')
-
-    def get_list_filter(self, request):
-        if request.user.is_superuser:
-            return 'created_on', 'operator', 'city', 'category', 'techie'
-        return 'created_on', 'techie'
-
+    # resource_class = DeviceResource
+    # list_display = ('name', 'operator', 'city', 'techie', 'created_on')
+    # search_fields = ('name',)
+    # list_select_related = ('category', 'operator', 'city', 'techie', 'neighborhood', 'zone')
+    # list_filter = ('category', 'techie', 'zone')
+    # actions = [activate_devices, 'delete_model']
+    #
+    # def get_fields(self, request, obj=None):
+    #     if request.user.is_superuser:
+    #         return ('name', 'description', 'category', 'city', 'latitude', 'longitude', 'created_on', 'last_update')
+    #     return ('name', 'description', 'category', 'city', 'latitude', 'longitude', 'created_on', 'last_update')
+    #
+    # def get_list_filter(self, request):
+    #     if request.user.is_superuser:
+    #         return 'created_on', 'city', 'category', 'techie'
+    #     return 'created_on', 'techie'
+    #
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
             return 'name', 'city', 'techie', 'latitude', 'longitude', 'created_on', 'last_update'
-        return 'name', 'operator', 'city', 'techie', 'latitude', 'longitude', 'created_on', 'last_update'
-
-    def get_queryset(self, request):
-        """
-            Returns a QuerySet of all model instances that can be edited by the
-            admin site. This is used by changelist_view.
-            """
-        techie_as_user = request.user
-        techie = UserProfile.objects.get(member=techie_as_user)
-        if request.user.is_superuser:
-            qs = self.model._default_manager.all()
-        else:
-            qs = self.model._default_manager.filter(techie=techie)
-        # TODO: this should be handled by some parameter to the ChangeList.
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
-
-    def save_model(self, request, obj, form, change):
-        techie_as_user = request.user
-        techie = UserProfile.objects.get(member=techie_as_user)
-        # device_count = Device.objects.all().count()
-        # obj.name = obj.category.name + "_" + str(device_count)
-        # obj.city = techie.city
-        super(DeviceAdmin, self).save_model(request, obj, form, change)
-
-    def get_actions(self, request):
-        actions = super(DeviceAdmin, self).get_actions(request)
-        del actions['delete_selected']
-        return actions
-
-    def delete_model(self, request, obj):
-        if not request.user.is_superuser:
-            pass
-        else:
-            obj.delete()
-
-    delete_model.short_description = 'Delete selected devices'
+        return 'name', 'city', 'techie', 'latitude', 'longitude', 'created_on', 'last_update'
+    #
+    # def get_queryset(self, request):
+    #     """
+    #         Returns a QuerySet of all model instances that can be edited by the
+    #         admin site. This is used by changelist_view.
+    #         """
+    #     techie_as_user = request.user
+    #     techie = UserProfile.objects.get(member=techie_as_user)
+    #     if request.user.is_superuser:
+    #         qs = self.model._default_manager.all()
+    #     else:
+    #         qs = self.model._default_manager.filter(techie=techie)
+    #     # TODO: this should be handled by some parameter to the ChangeList.
+    #     ordering = self.get_ordering(request)
+    #     if ordering:
+    #         qs = qs.order_by(*ordering)
+    #     return qs
+    #
+    # def save_model(self, request, obj, form, change):
+    #     techie_as_user = request.user
+    #     techie = UserProfile.objects.get(member=techie_as_user)
+    #     # device_count = Device.objects.all().count()
+    #     # obj.name = obj.category.name + "_" + str(device_count)
+    #     # obj.city = techie.city
+    #     super(DeviceAdmin, self).save_model(request, obj, form, change)
+    #
+    # def get_actions(self, request):
+    #     actions = super(DeviceAdmin, self).get_actions(request)
+    #     del actions['delete_selected']
+    #     return actions
+    #
+    # def delete_model(self, request, obj):
+    #     if not request.user.is_superuser:
+    #         pass
+    #     else:
+    #         obj.delete()
+    #
+    # delete_model.short_description = 'Delete selected devices'
 
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -346,28 +347,28 @@ class LogEventTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active')
 
 
-admin.site.unregister(User)
-admin.site.register(LogEntry, LogEntryAdmin)
+# admin.site.unregister(User)
+# admin.site.register(LogEntry, LogEntryAdmin)
 
 
 class PermissionAdmin(admin.ModelAdmin):
     list_display = ('name', 'content_type', 'codename')
 
 
-admin.site.register(Permission, PermissionAdmin)
-
-
-admin.site.register(Province, ProvinceAdmin)
-admin.site.register(Division, DivisionAdmin)
-admin.site.register(SubDivision, SubDivisionAdmin)
-admin.site.register(Neighborhood, NeighborhoodAdmin)
-admin.site.register(AssetLog, AssetLogAdmin)
-admin.site.register(LogEventType, LogEventTypeAdmin)
-admin.site.register(Fiber, FiberAdmin)
-admin.site.register(DeviceCategory, DeviceCategoryAdmin)
-admin.site.register(Device, DeviceAdmin)
-admin.site.register(Zone, ZoneAdmin)
-admin.site.register(City, CityAdmin)
-admin.site.register(User, CustomUserAdmin)
-admin.site.register(Operator, OperatorAdmin)
+# admin.site.register(Permission, PermissionAdmin)
+#
+#
+# admin.site.register(Province, ProvinceAdmin)
+# admin.site.register(Division, DivisionAdmin)
+# admin.site.register(SubDivision, SubDivisionAdmin)
+# admin.site.register(Neighborhood, NeighborhoodAdmin)
+# admin.site.register(AssetLog, AssetLogAdmin)
+# admin.site.register(LogEventType, LogEventTypeAdmin)
+# admin.site.register(Fiber, FiberAdmin)
+# admin.site.register(DeviceCategory, DeviceCategoryAdmin)
+# admin.site.register(Device, DeviceAdmin)
+# admin.site.register(Zone, ZoneAdmin)
+# admin.site.register(City, CityAdmin)
+# admin.site.register(User, CustomUserAdmin)
+# admin.site.register(Operator, OperatorAdmin)
 # admin.site.register(UserProfile, UserProfileAdmin)

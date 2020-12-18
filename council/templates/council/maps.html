@@ -18,7 +18,8 @@
 
 {% block content %}
     <div id="map"></div>
-    <form id="set-location" class="mobile-adjust" style="font-size: 1.2vw">
+    <form id="set-location" class="mobile-adjust" style="font-size: 1.2vw">{% csrf_token %}
+{#        method="post"#}
         <input type="hidden" name="lat">
         <input type="hidden" name="lng">
         <input type="hidden" name="formatted_address">
@@ -351,7 +352,8 @@
             localStorage.setItem('Location', JSON.stringify(savedLocation));
             localStorage.setItem('FormattedAddress', savedFormattedAddress);
             ikwen.showFloatingNotice("{% trans 'Location saved successfully!'%}", '', 3);
-            setTimeout(redirect, 2000);
+            $('#set-location').submit();
+            {#setTimeout(redirect, 2000);#}
 
         });
 

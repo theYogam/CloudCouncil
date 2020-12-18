@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from council.views import Home, PaymentOrderList, Dashboard, ChangeTax, TaxList, Receipt, ChangePaymentOrder, \
     EditProfile, ProfileList, set_momo_payment, confirm_payment, PaymentList, Maps, \
-    notify_outdated_payment_orders, ChangeProfile, ChangeBanner, BannerList
+    notify_outdated_payment_orders, ChangeProfile, ChangeBanner, BannerList, ProjectList, ChangeProject, CategoryList, ChangeCategory
 
 urlpatterns = patterns(
     '',
@@ -15,6 +15,11 @@ urlpatterns = patterns(
 
     url(r'^kmth/payments/$', permission_required('council.ik_manage_payment')(PaymentList.as_view()), name='payment_list'),
 
+
+    url(r'^kmth/categoryList/$', permission_required('council.ik_manage_category')(CategoryList.as_view()), name='category_list'),
+    url(r'^kmth/changeCategory/$', permission_required('council.ik_manage_category')(ChangeCategory.as_view()), name='change_category'),
+    url(r'^kmth/changeCategory/(?P<object_id>[-\w]+)$', permission_required('council.ik_manage_category')(ChangeCategory.as_view()),
+        name='change_category'),
 
     url(r'^kmth/taxList/$', permission_required('council.ik_manage_tax')(TaxList.as_view()), name='tax_list'),
     url(r'^kmth/changeTax/$', permission_required('council.ik_manage_tax')(ChangeTax.as_view()), name='change_tax'),
@@ -27,6 +32,13 @@ urlpatterns = patterns(
         permission_required('council.ik_view_profile')(ChangeProfile.as_view()), name='change_profile'),
     url(r'^kmth/profileList/$', permission_required('council.ik_view_profile')(ProfileList.as_view()), name='profile_list'),
 
+
+    url(r'^kmth/changeProject/$', permission_required('council.ik_view_project')(ChangeProject.as_view()),
+        name='change_project'),
+    url(r'^kmth/changeProject/(?P<object_id>[-\w]+)/$',
+        permission_required('council.ik_view_profile')(ChangeProject.as_view()), name='change_project'),
+    url(r'^kmth/projectList/$', permission_required('council.ik_view_project')(ProjectList.as_view()),
+        name='project_list'),
 
     url(r'^kmth/paymentOrderList$',
         permission_required('council.ik_manage_payment_order')(PaymentOrderList.as_view()),

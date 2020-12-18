@@ -35,8 +35,9 @@ from ikwen.core.utils import slice_watch_objects, rank_watch_objects, add_databa
     get_model_admin_instance, clear_counters, get_mail_content, XEmailMessage, add_event
 from ikwen.billing.invoicing.views import InvoiceDetail, Payment
 
-from council.models import PaymentOrder, Profile, Tax, Payment, Banner
-from council.admin import PaymentOrderAdmin, ProfileAdmin, TaxAdmin, PaymentAdmin, BannerAdmin
+from council.models import PaymentOrder, Profile, Tax, Payment, Banner, Project, Category
+from council.admin import PaymentOrderAdmin, ProfileAdmin, TaxAdmin, PaymentAdmin, BannerAdmin, ProjectAdmin, CategoryAdmin
+from pinsview.models import Device
 
 logger = logging.getLogger('ikwen')
 
@@ -133,15 +134,51 @@ class EditProfile(ChangeObjectBase):
     model = Profile
     model_admin = ProfileAdmin
 
+    def get_context_data(self, **kwargs):
+        context = super(EditProfile, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.all()
+        try:
+            context['profile'] = Profile.objects.get(member=self.request.user)
+        except:
+            pass
+        return context
+
+    def get_object(self, **kwargs):
+        if self.request.user.is_authenticated():
+            try:
+                profile = Profile.objects.get(member=self.request.user)
+            except:
+                profile = Profile.objects.create(member=self.request.user)
+            return profile
+
     def after_save(self, request, obj):
-        # context = self.get_context_data(**kwargs)
+        # Device.objects.create(category=obj., description=, configuration=, client_code=, site_code=, client_name
+        #                       zone=, name=, city=, techie=, latitude=, longitude=, created_on=, last_update=)
         return HttpResponseRedirect(reverse('home') + "?profile_created=yes")
+
+
+class ChangeCategory(ChangeObjectBase):
+    model = Category
+    model_admin = CategoryAdmin
+
+
+class CategoryList(HybridListView):
+    model = Category
+
+
+class ProjectList(HybridListView):
+    model = Project
+    model_admin = ProjectAdmin
+
+
+class ChangeProject(ChangeObjectBase):
+    model = Project
+    model_admin = ProjectAdmin
 
 
 class ChangeProfile(ChangeObjectBase):
     model = Profile
     model_admin = ProfileAdmin
-    # model_admin = ProfileAdmin
     template_name = 'council/change_profile.html'
 
 
@@ -283,6 +320,15 @@ class Maps(TemplateView):
         context = super(Maps, self).get_context_data(**kwargs)
         context['settings'] = settings
         return context
+
+    def get(self, request, *args, **kwargs):
+        lat = request.GET.get('lat')
+        lng = request.GET.get('lng')
+        formatted_address = request.GET.get('formatted_address')
+        if lat and lng and formatted_address:
+            return HttpResponseRedirect(reverse('council:edit_profile') + "?lat=" + lat + "&lng=" + lng +
+                                        "&formatted_address=" + formatted_address)
+        return super(Maps, self).get(request, *args, **kwargs)
 
 
 def notify_outdated_payment_orders(request, *args, **kwargs):

@@ -6,6 +6,9 @@
         <li role="presentation" class="dashboard">
             <a href="{% url 'ikwen:dashboard' %}">{% trans "Dashboard" %}</a>
         </li>
+        <li role="presentation" class="categories">
+            <a href="{% url 'council:category_list' %}">{% trans "Categories" %}</a>
+        </li>
         <li role="presentation" class="profiles">
             <a href="{% url 'council:profile_list' %}">{% trans "Profiles" %}</a>
         </li>
@@ -20,6 +23,27 @@
         </li>
         <li role="presentation" class="payments">
             <a href="{% url 'council:change_banner' %}">{% trans "Banner" %}</a>
+        </li>
+        <li role="presentation" class="projects">
+            <a href="{% url 'council:project_list' %}">{% trans "Projects" %}</a>
+        </li>
+        <li role="presentation" class="geolocation">
+            <a href="javascript:;" data-toggle="collapse" data-target="#geolocation"
+               aria-expanded="true" style="padding-right: 0;">{% trans "Geolocation" %}
+                <i class="fa fa-fw fa-caret-down"></i>
+            </a>
+            <ul id="geolocation" class="nav nav-pills nav-stacked collapse" aria-expanded="true"
+                style="padding-left: 15px">
+                <li class="cities">{% url 'pinsview:city_list' as city_list_url %}
+                    <a href="{{ city_list_url }}">{% trans "Cities" %}</a>
+                </li>
+                <li class="discount">{% url 'pinsview:devicecategory_list' as device_category_list_url %}
+                    <a href="{{ device_category_list_url }}">{% trans "Categories" %}</a>
+                </li>
+                <li class="devices">{% url 'pinsview:device_list' as device_list_url %}
+                    <a href="http://maps.creolink.com/" target="_blank">{% trans "Pins" %}</a>
+                </li>
+            </ul>
         </li>
     </ul>
 {% endblock %}

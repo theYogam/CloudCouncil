@@ -1,0 +1,358 @@
+{% extends "core/base_bs.html" %}
+{% load i18n humanize static auth_tokens  %}
+
+{% block meta %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="copyright" content="ikwen SARL" >
+
+    <meta property="og:image" content="{% static 'haira/img/logo-haira-about.png' %}" />
+{% endblock %}
+{% block head_style %}
+    {{ block.super }}
+    <link rel='stylesheet' href="{% static 'website/css/bootstrap-select.min.css' %}" />
+    <link rel='stylesheet' href="{% static 'website/css/website.css' %}?V=20.08.30.04.37" />
+    <link rel='stylesheet' href="{% static 'council/css/council.css' %}?V=20.12.17" />
+    <style>
+        .edge-panel-left .wrapper {padding-top: 0}
+        body {background: #F6F6F6; font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif}
+        section.address {background-image: url("{% static 'website/img/map.svg' %}"); background-size: 100% auto; color: #080808; font-size: 22px; font-weight: 400;height: 600px; margin-top: 120px;}
+        .modal.fade.show {opacity: 1}
+        .lead {font-weight: 400}
+        .btn.login {background: #233682;color: #FFF;font-weight: 600; width: 100px;}
+        .navbar-brand img {height: 50px}
+        @media only screen
+        and (max-width : 425px) {
+            .edge-panel-left {background: #fff; height: 100%; top: 0; width: 85%}
+             #bottom-menu {display: none}
+        }
+    </style>
+
+{% endblock %}
+
+{% block header %}
+    {% with collaborates_on=user.collaborates_on %}
+        {% url "ikwen:account_setup" as account_setup_url %}
+        <nav id="navbar" class="navbar navbar-default navbar-static-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="container-fluid">
+                        <i class="glyphicon glyphicon-menu-left back"></i>
+                        <div class="menu-button">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </div>
+                        {% block header_brand %}
+{#                            <a class="navbar-brand hidden-xs" href="{{ service.url }}" style="background-image: url({% static "haira/img/logo-haira-white.png" %}); background-position: center; background-size: cover; height: 100px; width: 100px; margin-top: -15px">#}
+{#                                <img src="{% static "haira/img/logo-haira.png" %}" alt="ikwen-logo" style="height: 50px; ">#}
+{#                            </a>#}
+{#                            <strong class="navbar-brand visible-xs">{{ service.project_name }}</strong>#}
+                            <strong class="navbar-brand">{{ service.project_name }}</strong>
+                        {% endblock %}
+                        {% block site_menu_xs %}
+                            <nav class="visible-xs pull-right">
+                                <ul id="nav-xs" class="nav navbar-nav navbar-right">
+                                    {% if user.is_authenticated %}
+                                        <li id="user-menu" class="dropdown">
+                                            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-user"></i>
+                                            </a>
+                                            <ul class="dropdown-menu has-shade" aria-labelledby="user-menu">
+                                                <li class="username" style="padding: 3px 20px"> {{ user.get_short_name }} </li>
+                                                <li role="separator" class="divider"></li>
+                                                <li>
+                                                    <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
+                                                </li>
+                                                <li><a href="{% url "ikwen:logout" %}">{% trans "Logout" %}</a> </li>
+                                            </ul>
+                                        </li>
+                                    {% else %}
+                                        <li class="hidden-xs">
+                                            <a href="{% url 'ikwen:sign_in' %}" class="cta">{% trans "Login" %}</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endblock %}
+                    </div>
+                </div>
+                <div id="navbar-search" class="navbar-form navbar-left">
+                    <div id="navbar-results" style="display: none" data-min-search-chars="2">
+                        <div class="stage">
+                            {% include 'core/snippets/spinner.html' %}
+                            <ul style="float: left; padding-left: 0; width: 100%">
+                                <li class="ik-li tpl" style="display: none">
+                                    <a class="target_url" style="display: block">
+                                        <span class="image rounded photo logo bg-img" style="background-image: url({% static 'ikwen/img/no_photo.png' %})"></span>
+                                        <div class="info">
+                                             <div class='full_name project_name has-faded-edge'></div>
+                                            <p class="about short_description minor-tag"></p>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                {% block site_menu %}
+                    <div id="site-menu" class="collapse navbar-collapse hidden-sm hidden-md hidden-lg">
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav navbar-right main-nav" style="margin: 0 -15px 0 0">
+{#                                <li class="about visible-md visible-lg"><a href="#taxes">{% trans 'Pay your taxes' %}</a></li>#}
+{#                                <li class="glamour-night visible-md visible-lg"><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><span>{% trans 'Digitalize your school' %}</span></a></li>#}
+{#                                <li class="pinsview visible-md visible-lg"><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><span>{% trans 'Create your online shop' %}</span></a></li>#}
+{#                                <li class="tsunami visible-md visible-lg"><a href="{% url 'council:change_paymentorder' %}" target="_blank"><span>{% trans 'Follow a payment order' %}</span></a></li>#}
+{#                                <li class="tsunami visible-md visible-lg">#}
+{#                                    {% include 'core/snippets/language_switcher.html' %}#}
+{#                                </li>#}
+                                <li id="ik-apps" class="visible-md dropdown">
+                                    <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-th"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="ik-apps">
+                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>
+                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>
+                                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>
+                                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>
+
+                                    </ul>
+                                </li>
+                                <li id="ik-apps" class="visible-sm dropdown">
+                                    <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-th"></i>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="ik-apps">
+                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>
+                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>
+                                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>
+                                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>
+                                    </ul>
+                                </li>
+                                {% if user.is_authenticated %}
+                                    <li id="user-menu" class="dropdown">
+                                        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-user"></i>
+                                        </a>
+                                        <ul class="dropdown-menu has-shade" aria-labelledby="user-menu">
+                                            <li class="username" style="padding: 3px 20px"> {{ user.get_short_name }} </li>
+                                            <li role="separator" class="divider"></li>
+                                            <li>
+                                                <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
+                                            </li>
+                                            <li><a href="{% url "ikwen:logout" %}">{% trans "Logout" %}</a> </li>
+                                        </ul>
+                                    </li>
+                                {% else %}
+                                    <li class="hidden-xs">
+                                        <a href="{% url 'ikwen:sign_in' %}" class="cta">{% trans "Login" %}</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endblock %}
+            </div>
+        </nav>
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+    {% block page_content %} {% endblock %}
+    {% include 'website/snippets/edge_panel.html' %}
+{% endblock %}
+
+{% block footer %}
+    <div class="clearfix"></div>
+    <footer class="footer" class="hidden-xs">
+        <div class="container text-left">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h3>MarketPlace</h3>
+                    <ul style="padding-left: 0">
+                        <li>
+                            <a href="{% url 'home' %}">{% trans "Home" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'flatpage' 'contact' %}">{% trans "Contact" %}</a>
+                        </li>
+                        {% if about_page %}
+                        <li>
+                            <a href="{% url 'flatpage' about_page.url %}">{% trans "About" %}</a>
+                        </li>
+                        {% endif %}
+                        {% if agreement_page %}
+                        <li>
+                            <a href="{% url 'flatpage' agreement_page.url %}">{% trans "Terms & conditions" %}</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-sm-4 contacts">
+                    <h3>Contacts</h3>
+                    <ul style="padding-left: 0">
+{#                        <li>#}
+{#                            <i class="fa fa-map-marker"></i>#}
+{#                            <a href="{% url 'home' %}">{% trans "Home" %}</a>#}
+{#                        </li>#}
+                        <li>
+                            <i class="fab fa-whatsapp"></i>
+                            <a href="https://api.whatsapp.com/send?phone={{ config.whatsapp_phone }}">{% trans "Send message" %}</a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope"></i>
+                            <a href="mailto:{{ config.contact_email }}">{{ config.contact_email }}</a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-4 share hidden">
+                    <h3>{% trans "Share with mates" %}</h3>
+                    <ul style="padding-left: 0">
+                        <li>
+                            <a href="https://wa.me/{{ config.contact_phone }}">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://facebook.com/sharer/sharer.php?u=https://www.facebook.com/Ikwen.SARL/" target="_blank">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/home?status=https://twitter.com/ikwenSARL" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </li>
+                        <li>
+                            {% include 'core/snippets/language_switcher.html' %}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-4 services">
+                    <h3>{% trans "Our services" %}</h3>
+                    <ul style="padding-left: 0">
+                        <li>
+                            <a href="#taxes" data-target="#taxes">
+                                <i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.ikwen.com/foulassi/scolarfleet/deploy?is_baf_council=true">
+                                <i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank">
+                                <i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'council:change_paymentorder' %}" target="_blank">
+                                <i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12" style="float: none; margin: auto" >
+                &copy; {{ year }} <a class="company-name" href="{{ service.url }}"><strong>{{ config.company_name }}</strong></a>.
+                {% trans "All rights reserved." %}
+                {% if config.legal_mentions_url %}
+                - <a href="{{ config.legal_mentions_url }}" style="color: #666; text-decoration: none">{% trans "Legal mentions" %}</a>
+                {% endif %}
+            </div>
+
+{#        <div id="bottom-menu" >#}
+{#            <ul class="social-square" style="float: left">#}
+{#                <li><a href="https://www.youtube.com/channel/UC6ojg4faHQ9DMvFx7ZE4iOw" target="_blank" class="ico-youtube" title="YouTube"><i class="fab fa-youtube-square"></i></a></li>#}
+{#                <li><a href="{{ config.instagram_link }}" target="_blank" class="ico-instagram" title="Instagram"><i class="fab fa-instagram"></i></a></li>#}
+{#                <li><a href="{{ config.twitter_link }}" target="_blank" class="ico-twitter" title="Twitter"><i class="fab fa-twitter-square"></i></a></li>#}
+{#                <li><a href="{{ config.facebook_link }}" target="_blank" class="ico-facebook" title="Facebook"><i class="fab fa-facebook-square"></i></a></li><li class="col-xs-12">#}
+{#                <li><a class="social-share whatsapp btn btn-block visible-xs" href="https://wa.me/{{ config.contact_phone }}"><i class="fab fa-whatsapp"></i></a></li>#}
+{#            </ul>#}
+{#            <ul>#}
+{#                {% include 'core/snippets/language_switcher.html' %}#}
+{#                <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>#}
+{#                <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>#}
+{#                <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>#}
+{#                <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>#}
+{#            </ul>#}
+{#            <span class="col-md-3 col-md-offset-3" >#}
+{#                &copy; {{ year }} <a class="company-name" href="{{ service.url }}"><strong>{{ config.company_name }}</strong></a>.#}
+{#                {% trans "All rights reserved." %}#}
+{#                {% if config.legal_mentions_url %}#}
+{#                - <a href="{{ config.legal_mentions_url }}" style="color: #666; text-decoration: none">{% trans "Legal mentions" %}</a>#}
+{#                {% endif %}#}
+{#            </span>#}
+        </div>
+{#        <a style="display: none" href="{% url 'service_indexes' 0 %}">Service Indexes</a>#}
+    </footer>
+{% endblock %}
+
+
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        (() => {
+            $('.navbar .dropdown').hover(function() {
+                $(this).find('.dropdown-menu').first().stop(true, true).slideDown(150);
+                }, function() {
+                $(this).find('.dropdown-menu').first().stop(true, true).slideUp(105)
+            }).on('click', function (e) {
+                e.stopPropagation();
+            });
+
+
+            let lastScrollTop = 0;
+            $(window).scroll(function(e){
+                let scrollTop = $(window).scrollTop();
+                let docHeight = $(document).height();
+                let winHeight = $(window).height();
+                let scrollPercent = (scrollTop) / (docHeight - winHeight);
+                let scrollPercentRounded = Math.round(scrollPercent*100);
+                if (scrollPercentRounded > 9) {
+                    $(".navbar").addClass("active");
+                    $("#navbar-search").addClass("active");
+                    $('ul.dropdown-menu').addClass('page-scrolled');
+                } else {
+                    $(".navbar").removeClass("active");
+                    $("#navbar-search").removeClass("active");
+                    $('ul.dropdown-menu').removeClass('page-scrolled')
+                }
+                if (scrollPercentRounded > 21) {
+                    $('.back-to-top').removeClass('hiding').addClass('showing');
+                } else {
+                    $('.back-to-top').removeClass('showing').addClass('hiding');
+                }
+                if (scrollPercentRounded > 40) {
+                    $('.anchor').hide();
+                }
+                if ($(window).width() < 768) {
+                    const st = window.pageYOffset +1 || document.documentElement.scrollTop;
+                    if (st  > lastScrollTop ) { $('.anchor').hide() }
+                    lastScrollTop = st;
+                }
+            });
+            $('.js-scrollTo').on('click', function() {
+                let page = $(this).attr('href');
+                let speed = 750;
+                $('html, body').animate( { scrollTop: $(page).offset().top }, speed );
+                return false;
+            });
+        })()
+    </script>
+{% endblock %}

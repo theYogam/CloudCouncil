@@ -8,27 +8,29 @@
                     <span class="image"
                        style="background-image: url({% get_media_prefix %}{{ obj.image.small_name }});"></span>
                 </div>
-                <div>
-                    <strong class="name">{{ obj.name }}</strong>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="key-points">
+                <div class="description">
                     <div>
-                        <strong>{% trans "Duration" %} :</strong>
-                        <span>{{ obj.duration_text }}</span>
+                        <strong class="name">{{ obj.name }}</strong>
+                        <div class="clearfix"></div>
                     </div>
-                    <div style="margin: 15px 0">
-                        <sup style="font-size: 13px">{{ currency_symbol }}</sup>
-                        <strong style="font-size: 25px">  {{ obj.cost|intcomma }}</strong>
+                    <div class="key-points">
+                        <div>
+                            <strong>{% trans "Duration" %} :</strong>
+                            <span>{{ obj.duration_text }}</span>
+                        </div>
+                        <div style="margin: 15px 0">
+                            <sup style="font-size: 13px">{{ currency_symbol }}</sup>
+                            <strong style="font-size: 25px">  {{ obj.cost|intcomma }}</strong>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
                     <div class="clearfix"></div>
+                    <p class="about">
+                        {{ obj.short_description }}
+                    </p>
+                    <button class="btn btn-block btn-outline-success {% if user.is_authenticated %}{% if created_profile %}payment-start{% else %}create-profile{% endif %}{% else %}prompt-login{% endif %}"
+                            data-product-id="{{ obj.id }}" data-cost="{{ obj.cost }}">{% trans 'Pay' %}</button>
                 </div>
-                <div class="clearfix"></div>
-                <p class="about">
-                    {{ obj.short_description }}
-                </p>
-                <button class="btn btn-block btn-outline-success {% if user.is_authenticated %}{% if created_profile %}payment-start{% else %}create-profile{% endif %}{% else %}prompt-login{% endif %}"
-                        data-product-id="{{ obj.id }}" data-cost="{{ obj.cost }}">{% trans 'Pay' %}</button>
             </div>
             <div class="clearfix"></div>
         </div>

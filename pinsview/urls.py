@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import admin
 
 from pinsview.views import save_optical_fiber_position, save_device_position, \
@@ -9,7 +9,9 @@ from pinsview.views import save_optical_fiber_position, save_device_position, \
     update_fibers_distance, check_new_fiber, check_new_device, check_data_integrity, check_line_update, Statistic, \
     get_specific_fiber_data, get_specific_device_data, get_updated_fibers, load_equipments_by_city, grab_fiber_info, \
     get_asset_event_log, save_event_log, grab_event_log_detail, grab_offline_devices,update_device_cities,\
-    save_asset_config, grab_asset_config, save_prospect, update_prospect_status, SignIn
+    save_asset_config, grab_asset_config, save_prospect, update_prospect_status
+
+from admin_panel import *
 
 SIGN_IN = 'login'
 _extra_context = BaseView().get_context_data()
@@ -18,7 +20,19 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    url(r'^equipments$', user_passes_test(is_registered_member)(Network.as_view()), name='network'),
+    url(r'^$', login_required()(Network.as_view()), name='network'),
+
+    url(r'^changeCategory/$', ChangeDeviceCategory.as_view(), name='change_devicecategory'),
+    url(r'^changeCategory/(?P<object_id>[-\w]+)$', ChangeDeviceCategory.as_view(), name='change_devicecategory'),
+    url(r'^categoryList$', DeviceCategoryList.as_view(), name='devicecategory_list'),
+
+    url(r'^changePin/$', ChangeDevice.as_view(), name='change_device'),
+    url(r'^changePin/(?P<object_id>[-\w]+)$', ChangeDevice.as_view(), name='change_device'),
+    url(r'^pinList$', DeviceList.as_view(), name='device_list'),
+
+    url(r'^changeCity/$', ChangeCity.as_view(), name='change_city'),
+    url(r'^changeCity/(?P<object_id>[-\w]+)$', ChangeCity.as_view(), name='change_city'),
+    url(r'^cityList$', CityList.as_view(), name='city_list'),
 
     url(r'^findFiberlines', find_lines, name='find_lines'),
     url(r'^statistics$', user_passes_test(is_registered_member)(Statistic.as_view()), name='statistic'),

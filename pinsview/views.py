@@ -32,6 +32,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.generic.base import TemplateView
 
+from ikwen.accesscontrol.models import Member
+
 # from CreolinkLocalizer import settings
 from conf import settings
 from pinsview.models import Device, FiberEventData, DeviceCategory, Fiber, Zone, City, Operator, UserProfile, \
@@ -69,7 +71,7 @@ class SignIn(TemplateView):
                 if next_url_view:
                     next_url = reverse(next_url_view)
                 else:
-                    next_url = reverse('network')
+                    next_url = reverse('pinsview:network')
             return HttpResponseRedirect(next_url)
         return super(SignIn, self).get(request, *args, **kwargs)
 
@@ -92,7 +94,7 @@ class SignIn(TemplateView):
                 if next_url_view:
                     next_url = reverse(next_url_view)
                 else:
-                    next_url = reverse('network')
+                    next_url = reverse('pinsview:network')
             return HttpResponseRedirect(next_url + "?" + query_string)
         else:
             context = self.get_context_data(**kwargs)
@@ -207,15 +209,18 @@ class Network(BaseView):
 
         context = super(Network, self).get_context_data(**kwargs)
         member = self.request.user
-        profile = UserProfile.objects.get(member=member)
+        try:
+            profile = UserProfile.objects.get(member=member)
+        except:
+            profile = UserProfile.objects.create(member=self.request.user)
         user_cities = profile.city.all()
         default_city = City.objects.get(name='YAOUNDE')
         operator = profile.operator
 
-        if user_cities.count() > 0:
+        try:
             context['user_city'] = user_cities[0]
             user_city = user_cities[0]
-        else:
+        except:
             context['user_city'] = default_city
             user_city = default_city
         context['user_profile'] = profile
@@ -962,10 +967,10 @@ def grab_devices(request, *args, **kwargs):
 def grab_offline_devices(request, *args, **kwargs):
     devices = []
 
-    pon_modem = DeviceCategory.objects.get(name="Modem PON")
-    docsis_modem = DeviceCategory.objects.get(name="Modem DOCSIS")
-    total_pon_modem_count = Device.objects.filter(category=pon_modem).count()
-    offline_pon_modem_count = Device.objects.filter(status='offline', category=pon_modem).count()
+    shop = DeviceCategory.objects.get(name="Shop")
+    docsis_modem = DeviceCategory.objects.get(name="Bar")
+    total_shop_count = Device.objects.filter(category=shop).count()
+    offline_shop_count = Device.objects.filter(status='offline', category=shop).count()
     offline_docsis_modem_count = Device.objects.filter(status='offline', category=docsis_modem).count()
     total_docsis_modem_count = Device.objects.filter(category=docsis_modem).count()
     device_queryset = Device.objects.select_related('category', 'zone', 'techie', 'operator')\
@@ -992,8 +997,8 @@ def grab_offline_devices(request, *args, **kwargs):
             devices.append(equipment)
     return HttpResponse(json.dumps({
         'devices': devices,
-        'total_pon_modem_count': total_pon_modem_count,
-        'offline_pon_modem_count': offline_pon_modem_count,
+        'total_pon_modem_count': total_shop_count,
+        'offline_pon_modem_count': offline_shop_count,
         'offline_docsis_modem_count': offline_docsis_modem_count,
         'total_docsis_modem_count': total_docsis_modem_count,
     }), content_type='application/json')
@@ -1675,3 +1680,5 @@ def update_prospect_status(request, *args, **kwargs):
     device.name = 'Client_from_sales_%s' %device.id
     device.save()
     return HttpResponse('Device successfully updated', content_type="text/plain")
+
+

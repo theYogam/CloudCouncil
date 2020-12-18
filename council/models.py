@@ -30,6 +30,13 @@ INVOICE_STATUS_CHOICES = (
 )
 
 
+class Category(Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Tax(AbstractProduct):
     phone = models.CharField(max_length=60, blank=True, null=True,
                              help_text="Contact phone of support team")
@@ -70,24 +77,19 @@ class Payment(AbstractPayment):
 
 
 class Profile(Model):
-    CITIZEN = 'Citizen'
-    MERCHANT = 'Merchant'
-    PROVIDER = 'Provider'
-    TYPES = (
-        (CITIZEN, _('Citizen')),
-        (MERCHANT, _('Merchant')),
-        (PROVIDER, _('Provider'))
-    )
+
     member = models.ForeignKey(Member)
-    type = models.CharField(_('Type'), max_length=100, choices=TYPES)
-    location = models.CharField(_('GPS location'), max_length=100, blank=True, null=True)
+    business_type = models.ForeignKey(Category, null=True, blank=True)
+    location_lat = models.FloatField(default=0.0, null=True, blank=True)
+    location_lng = models.FloatField(default=0.0, null=True, blank=True)
+    formatted_address = models.CharField(max_length=250, default='', null=True, blank=True)
+
     id_number = models.CharField(_('ID Card Number'), max_length=100)
     taxpayer = models.CharField(_('Taxpayer Number'),  max_length=100, blank=True, null=True)
-    business_type = models.CharField(_('Business Type'), max_length=100, blank=True, null=True)
     company_name = models.CharField(_('Company Name'), max_length=100, blank=True, null=True)
 
     def __unicode__(self):
-        return "%s: %s" % (self.type, self.member.full_name)
+        return "%s: %s" % (self.business_type, self.member.full_name)
 
 
 class Banner(Model):
@@ -95,3 +97,12 @@ class Banner(Model):
     title_header = models.CharField(_("Title's header"), blank=True, null=True)
     image = MultiImageField(_('Banner image'), allowed_extensions=['jpeg', 'png', 'jpg'],
                             upload_to=UPLOAD_TO, required_width=1920, null=True)
+
+
+class Project(Model):
+    name = models.CharField(_("Project's name"), max_length=150)
+    leader = models.ForeignKey(Member)
+    cost = models.IntegerField(_("Cost"), default=0)
+    description = models.TextField(_("Project description"))
+    attachment = FileField(_('Attachment'), allowed_extensions=['doc', 'docx', 'pdf', 'ppt', 'odt'],
+                           upload_to='Projects')
