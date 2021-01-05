@@ -7,6 +7,7 @@
 
 {% block head_style %}
     {{ block.super }}
+    <link rel="stylesheet" href="{% static 'council/css/council.css' %}">
     <style>
         #map {height: 100%;}
         html, body {height: 100%;margin: 0;padding: 0;}
@@ -26,11 +27,11 @@
     </form>
     <div id="defaultContent" style="display: none">
         <div class="content-string">
-            <h4 class="title text-center" style="margin-top: 0px; padding-bottom: 0.5vh;"> {% trans "Set your position" %}</h4>
+            <h4 class="title text-center" style="margin-top: 0px; padding-bottom: 0.5vh;"> {% trans "Set position" %}</h4>
             <div class="content">'
                 <p>{% trans "Indicate the desired position for the intervention" %}</p>
                 <div class="text-center">
-                    <button class="btn btn-outline-success text-center {% if order %}update{% else %}set{% endif %}-position" style="min-width: 150px; margin-top:1vh;">{% trans "Set it" %}</button>
+                    <button class="btn btn-outline-success pin-here text-center {% if order %}update{% else %}set{% endif %}-position" style="min-width: 150px; margin-top:1vh;">{% trans "Pin here" %}</button>
                 </div>
             </div>
         </div>
