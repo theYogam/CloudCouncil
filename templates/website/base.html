@@ -66,6 +66,11 @@
                                                 <li>
                                                     <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
                                                 </li>
+                                                {% if request.user.is_staff %}
+                                                    <li>
+                                                        <a href="{% url 'pinsview:network' %}">{% trans "Pinsview" %}</a>
+                                                    </li>
+                                                {% endif %}
                                                 <li>
                                                     <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
                                                 </li>
@@ -73,7 +78,7 @@
                                             </ul>
                                         </li>
                                     {% else %}
-                                        <li class="hidden-xs">
+                                        <li>
                                             <a href="{% url 'ikwen:sign_in' %}" class="cta">{% trans "Login" %}</a>
                                         </li>
                                     {% endif %}
@@ -119,8 +124,8 @@
                                         <i class="fas fa-th"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="ik-apps">
-                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>
-                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>
+                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i><span>{% trans 'Pay your taxes' %}</span></a></li>
+                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i><span>{% trans 'Digitalize your school' %}</span></a></li>
                                         <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>
                                         <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>
 
@@ -131,10 +136,10 @@
                                         <i class="fas fa-th"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="ik-apps">
-                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>
-                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>
-                                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>
-                                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>
+                                        <li><a href="#taxes"><i class="fas fa-money-bill"></i><span style="margin-left: 3px">{% trans 'Pay your taxes' %}</span></a></li>
+                                        <li><a href="{% url 'foulassi:deploy_cloud' %}?is_baf_council=true"><i class="fas fa-school"></i><span style="margin-left: 3px">{% trans 'Digitalize your school' %}</span></a></li>
+                                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span style="margin-left: 3px">{% trans 'Create your online shop' %}</span></a></li>
+                                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span style="margin-left: 3px">{% trans 'Follow a payment order' %}</span></a></li>
                                     </ul>
                                 </li>
                                 {% if user.is_authenticated %}
@@ -148,6 +153,11 @@
                                             <li>
                                                 <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
                                             </li>
+                                            {% if user.is_staff %}
+                                                <li>
+                                                    <a href="{% url 'pinsview:network' %}">{% trans "Pinpoint asset" %}</a>
+                                                </li>
+                                            {% endif %}
                                             <li>
                                                 <a href="{{ account_setup_url|ikwenize }}">{% trans "Account setup" %}</a>
                                             </li>

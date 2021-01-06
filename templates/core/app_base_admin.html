@@ -29,7 +29,7 @@
         </li>
         <li role="presentation" class="geolocation">
             <a href="javascript:;" data-toggle="collapse" data-target="#geolocation"
-               aria-expanded="true" style="padding-right: 0;">{% trans "Geolocation" %}
+               aria-expanded="true" style="padding-right: 0;">Pinsview
                 <i class="fa fa-fw fa-caret-down"></i>
             </a>
             <ul id="geolocation" class="nav nav-pills nav-stacked collapse" aria-expanded="true"
@@ -37,12 +37,25 @@
                 <li class="cities">{% url 'pinsview:city_list' as city_list_url %}
                     <a href="{{ city_list_url }}">{% trans "Cities" %}</a>
                 </li>
-                <li class="discount">{% url 'pinsview:devicecategory_list' as device_category_list_url %}
-                    <a href="{{ device_category_list_url }}">{% trans "Categories" %}</a>
+{#                <li class="zones">{% url 'pinsview:zone_list' as zone_list_url %}#}
+{#                    <a href="{{ zone_list_url }}">{% trans "Zones" %}</a>#}
+{#                </li>#}
+                <li class="discount">{% url 'pinsview:pincategory_list' as pin_category_list_url %}
+                    <a href="{{ pin_category_list_url }}">{% trans "Categories" %}</a>
                 </li>
-                <li class="devices">{% url 'pinsview:device_list' as device_list_url %}
-                    <a href="http://maps.creolink.com/" target="_blank">{% trans "Pins" %}</a>
+                <li class="pins">{% url 'pinsview:pin_list' as pin_list_url %}
+                    <a href="{{ pin_list_url }}">{% trans "Pins" %}</a>
                 </li>
+                <div class="divider"></div>
+                <li class="logeventtypes">{% url 'pinsview:logeventtype_list' as log_event_type_list_url %}
+                    <a href="{{ log_event_type_list_url }}">{% trans "Log Event Types" %}</a>
+                </li>
+                <li class="logevents">{% url 'pinsview:assetlog_list' as asset_log_list_url %}
+                    <a href="{{ asset_log_list_url }}">{% trans "Assets Log" %}</a>
+                </li>
+{#                <li class="neighborhoods">{% url 'pinsview:neighborhood_list' as neighborhood_list_url %}#}
+{#                    <a href="{{ neighborhood_list_url }}">{% trans "Neighborhoods" %}</a>#}
+{#                </li>#}
             </ul>
         </li>
     </ul>

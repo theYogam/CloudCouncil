@@ -9,16 +9,17 @@
                 </div>
                 <div class="divider"></div>
                     <ul class="nav nav-pills nav-stacked">
-                        <li><a href="#taxes"><i class="fas fa-money-bill"></i> <span>{% trans 'Pay your taxes' %}</span></a></li>
-                        <li><a href="https://www.ikwen.com/foulassi/scolarfleet/deploy?is_baf_council=true"><i class="fas fa-school"></i> <span>{% trans 'Digitalize your school' %}</span></a></li>
-                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span>{% trans 'Create your online shop' %}</span></a></li>
-                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span>{% trans 'Follow a payment order' %}</span></a></li>
+                        <li><a href="#taxes"><i class="fas fa-money-bill"></i><span style="margin-left: 3px">{% trans 'Pay your taxes' %}</span></a></li>
+                        <li><a href="https://www.ikwen.com/foulassi/scolarfleet/deploy?is_baf_council=true"><i class="fas fa-school"></i><span style="margin-left: 3px">{% trans 'Digitalize your school' %}</span></a></li>
+                        <li><a href="https://www.ikwen.com/tsunami/bundles?is_baf_council=true" target="_blank"><i class="fas fa-shopping-cart"></i><span style="margin-left: 3px">{% trans 'Create your online shop' %}</span></a></li>
+                        <li><a href="{% url 'council:change_paymentorder' %}" target="_blank"><i class="fas fa-receipt"></i><span style="margin-left: 3px">{% trans 'Follow a payment order' %}</span></a></li>
+                        {% if request.user.is_staff %}<li><a href="{% url 'pinsview:network' %}"><i class="fas fa-map-marker-alt"></i><span>{% trans 'Pinsview' %}</span></a></li>{% endif %}
 
                     </ul>
                     <div class="clearfix"></div>
 
                     <div class="social-icon">
-                        <a style="padding-right: 10px; text-decoration: none; transition: 0.2s;" href="https://www.youtube.com/channel/UC6ojg4faHQ9DMvFx7ZE4iOw" target="_blank" class="ico-youtube" title="YouTube"><i class="fab fa-youtube-square"></i></a>
+                        <a style="padding-right: 10px; text-decoration: none; transition: 0.2s;" href="https://www.youtube.com/watch?v=BZb0XFs73yc" target="_blank" class="ico-youtube" title="YouTube"><i class="fab fa-youtube-square"></i></a>
                         <a style="padding-right: 10px; text-decoration: none; transition: 0.2s;" href="{{ config.instagram_link }}" target="_blank" class="ico-instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
                         <a style="padding-right: 10px; text-decoration: none; transition: 0.2s;" href="{{ config.twitter_link }}" target="_blank" class="ico-twitter" title="Twitter"><i class="fab fa-twitter-square"></i></a>
                         <a style="padding-right: 10px; text-decoration: none; transition: 0.2s;" href="{{ config.facebook_link }}" target="_blank" class="ico-facebook" title="Facebook"><i class="fab fa-facebook-square"></i></a>

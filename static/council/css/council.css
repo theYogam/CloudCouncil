@@ -1,10 +1,18 @@
 /**
 	Document   : council.css
 	Created on : April 16, 2020, 13:58
-	Author     : Kom Sihon
+	Author     : Kom Sihon & Silatchom SIAKA
 	Description:
 		Additional rules for marketplace website
 */
+
+:root {
+    --first-color: #2a3d86;
+    --second-color: #ed5753;
+    --third-color: #f5a42c;
+}
+
+
 body {background: #f8f6f6;}
 #content .container-fluid {padding: 15px 60px}
 #content h2, h3, h4 {color: #201a3a}
@@ -12,14 +20,36 @@ body {background: #f8f6f6;}
   background: linear-gradient(to right, #8e0e00, #1f1c18); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     height: 400px; width: inherit;}
 #content .edit-profile * {color: #fff}
-#content .edit-profile .inner {margin-top: 50px; float: none}
+#content .edit-profile .inner {margin-top: 70px;float: none;}
 #content .edit-profile .btn {border-color: #fff}
 #content .edit-profile .btn:hover {background-color: #fff; color: #8e0e00}
 .main-title {font-weight: 900;font-size: 48px;margin: 25px 0 0px;text-indent: 0;}
 .description, .description li {font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 18px; color: #445b75}
-.btn {font-weight: 600;font-size: 20px;padding: 8px 40px;height: 45px;margin: 40px 0;}
+.btn {font-weight: 600;font-size: 16px;padding: 8px 40px;height: 45px;margin: 40px 0;line-height: 23px;}
 label{margin-top: 20px}
 
+/*.btn {font-size: 14px;height: 40px;font-weight: 700;}*/
+.pin-here {
+    margin: 10px 0;
+    color: #fff;
+    background: var(--first-color);  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, var(--third-color), var(--second-color), var(--first-color));  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, var(--third-color), var(--second-color), var(--first-color)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border: var(--dls19-brand-gradient-radial, radial-gradient(circle at center,
+          #FF385C 0%,
+          #E61E4D 27.5%,
+          #E31C5F 40%,
+          #D70466 57.5%,
+          #BD1E59 75%,
+          #BD1E59 100%
+        )) ;
+}
+.pin-here:hover {
+    background: var(--second-color);  /* fallback for old browsers */
+    /*background: -webkit-linear-gradient(to right, var(--first-color)), var(--second-color), var(--third-color);  !* Chrome 10-25, Safari 5.1-6 *!*/
+    /*background: linear-gradient(to right, var(--third-color), var(--second-color), var(--first-color)); !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!*/
+
+}
 .failed {background-color: red; color: #f6f6f6}
 #nav-xs .show-search, #navbar-search {display: none}
 .navbar-brand.visible-xs {font-size: 16px;margin-top: 3px;}
@@ -79,7 +109,7 @@ footer {background: #f6f6f6; margin: 0; padding: 10px 30px}
 .product .name {height: 75px;display: block;font-size: 27px;margin-top: 20px;overflow: hidden;color: #0d47a1;}
 .product .key-points {clear: both;color: #103369;font-size: 14px;height: 45px;margin: 15px 0;}
 .product .about {color: #445b75;clear: both;height: 42px;font-size: 14px; margin: 20px 0; overflow: hidden;}
-
+.product button {line-height: 18px}
 .product-details {margin-top: 5px;margin-bottom: 5vh;}
 .product-details .img {
     background: no-repeat center;

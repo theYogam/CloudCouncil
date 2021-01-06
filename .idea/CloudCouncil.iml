@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="django" name="Django">
+      <configuration>
+        <option name="rootFolder" value="$MODULE_DIR$/conf" />
+        <option name="settingsModule" value="settings.py" />
+        <option name="manageScript" value="settings.py" />
+        <option name="environment" value="&lt;map/&gt;" />
+        <option name="doNotUseTestRunner" value="false" />
+        <option name="trackFilePattern" value="" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="jdk" jdkName="Python 2.7 (virtualenv)" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Cyberlink" />
+    <orderEntry type="module" module-name="Careers" />
+    <orderEntry type="module" module-name="dbBackup" />
+    <orderEntry type="module" module-name="Foulassi" />
+    <orderEntry type="module" module-name="ikwen" />
+    <orderEntry type="module" module-name="eConnect" />
+    <orderEntry type="module" module-name="Haira2" />
+    <orderEntry type="module" module-name="Enfinchezmoi" />
+    <orderEntry type="module" module-name="shavida" />
+    <orderEntry type="module" module-name="Everyday" />
+    <orderEntry type="module" module-name="Daraja" />
+    <orderEntry type="module" module-name="DoCash" />
+    <orderEntry type="module" module-name="Kakocase" />
+    <orderEntry type="module" module-name="Pinsview" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Django" />
+  </component>
+</module>

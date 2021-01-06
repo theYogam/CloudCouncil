@@ -13,7 +13,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    fields = ('member', 'business_type', 'taxpayer', 'location_lat', 'location_lng', 'formatted_address')
+    fields = ('member', 'id_number', 'business_type', 'company_name', 'taxpayer', 'location_lat', 'location_lng', 'formatted_address')
 
 
 class PaymentOrderAdmin(admin.ModelAdmin):

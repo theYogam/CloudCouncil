@@ -4,40 +4,33 @@ import string
 from datetime import timedelta, datetime
 from threading import Thread
 
-from django.shortcuts import render, get_object_or_404
-
 # Create your views here.
 
 import requests
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.utils.module_loading import import_by_path
-from django.utils.translation import activate, ugettext as _
+from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView
 
 from ikwen.accesscontrol.models import Member
 from ikwen.conf.settings import WALLETS_DB_ALIAS
 from ikwen.core.constants import CONFIRMED
-from ikwen.core.models import Application, Service
-from ikwen.core.views import HybridListView, ChangeObjectBase
 from ikwen.core.templatetags.url_utils import strip_base_alias
-from ikwen.core.utils import set_counters, increment_history_field, get_service_instance, get_mail_content, send_push
+from ikwen.core.utils import increment_history_field
 from ikwen.billing.models import MoMoTransaction, MTN_MOMO
 from ikwen.billing.utils import get_next_invoice_number
 
 from ikwen.core.views import HybridListView, DashboardBase, ChangeObjectBase
-from ikwen.core.models import Service, Application, Config
-from ikwen.core.utils import slice_watch_objects, rank_watch_objects, add_database, set_counters, get_service_instance, \
-    get_model_admin_instance, clear_counters, get_mail_content, XEmailMessage, add_event
-from ikwen.billing.invoicing.views import InvoiceDetail, Payment
+from ikwen.core.utils import set_counters, get_service_instance, \
+    get_mail_content
+from ikwen.billing.invoicing.views import Payment
 
 from council.models import PaymentOrder, Profile, Tax, Payment, Banner, Project, Category
 from council.admin import PaymentOrderAdmin, ProfileAdmin, TaxAdmin, PaymentAdmin, BannerAdmin, ProjectAdmin, CategoryAdmin
-from pinsview.models import Device
+from pinsview.models import Pin, PinCategory, City, Zone
 
 logger = logging.getLogger('ikwen')
 
@@ -152,8 +145,21 @@ class EditProfile(ChangeObjectBase):
             return profile
 
     def after_save(self, request, obj):
-        # Device.objects.create(category=obj., description=, configuration=, client_code=, site_code=, client_name
-        #                       zone=, name=, city=, techie=, latitude=, longitude=, created_on=, last_update=)
+        try:
+            category = PinCategory.objects.get(name=obj.business_type.name)
+        except:
+            category = PinCategory.objects.create(name=obj.business_type.name)
+        try:
+            city = City.objects.get(name=obj.formatted_address.split(',')[1])
+        except:
+            city = City.objects.create(name=obj.formatted_address.split(',')[1])
+        try:
+            zone = Zone.objects.get(name=obj.formatted_address.split(',')[0], city=city)
+        except:
+            zone = Zone.objects.create(name=obj.formatted_address.split(',')[0], city=city)
+        Pin.objects.create(category=category, name=obj.member.full_name,
+                              city=city, latitude=obj.location_lat,
+                              longitude=obj.location_lng, created_on=obj.created_on, updated_on=obj.updated_on)
         return HttpResponseRedirect(reverse('home') + "?profile_created=yes")
 
 
@@ -201,7 +207,6 @@ def set_momo_payment(request, *args, **kwargs):
         .create(service_id=service.id, type=MoMoTransaction.CASH_OUT, amount=product.cost, phone='N/A', model=model_name,
                 object_id=payment.id, task_id=signature, wallet=mean, username=request.user.username, is_running=True)
     notification_url = reverse('council:confirm_payment', args=(tx.id, signature))
-    logger.debug(notification_url)
     cancel_url = reverse('home')
 
     return_url = reverse('council:receipt', args=(payment.id, ))

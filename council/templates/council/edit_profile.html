@@ -24,25 +24,25 @@
                     <h4 class="main-title" style="">{% trans "Citizen info" %}</h4>
                     <div class="form-group-md">
                         <label for="id-id_number">{% trans 'ID Number:' %}</label>
-                        <input id="id-id_number" type="text" class="input-md form-control {% if obj.id_number %}disabled{% endif %}" name="id_number" {% if obj.id_number %}value="{{ obj.id_number }}"{% endif %}>
+                        <input id="id-id_number" type="text" class="input-md form-control" name="id_number" {% if obj.id_number %}value="{{ obj.id_number }}"{% endif %}>
                         <div class="clearfix"></div>
                     </div>
                     <div class="form-group-md">
                         <label for="id-location">{% trans 'Location:' %}</label>
                         <div class="clearfix"></div>
                         <span id="show-location" style="margin: 10px 0"></span>
-                        {% if obj.formatted_address %}
+                        {% if request.GET.lat %}
                             <p>
-                                <strong style="color: #0a4b3e">{{ obj.formatted_address }}</strong>
+                                <strong style="color: #0a4b3e">{{ request.GET.formatted_address }}</strong>
                                 <p style="font-size: 14px">
                                     <span>{% trans "Do you wanna change it ?" %}</span>
                                     <a href="{% url 'council:maps' %}" class="set-location" style="margin: 10px 0; line-height: 25px">{% trans 'Update location' %}</a>
                                 </p>
                             </p>
                         {% else %}
-                            {% if request.GET.lat %}
+                            {% if obj.formatted_address %}
                                 <p>
-                                    <strong style="color: #0a4b3e">{{ request.GET.formatted_address }}</strong>
+                                    <strong style="color: #0a4b3e">{{ obj.formatted_address }}</strong>
                                     <p style="font-size: 14px">
                                         <span>{% trans "Do you wanna change it ?" %}</span>
                                         <a href="{% url 'council:maps' %}" class="set-location" style="margin: 10px 0; line-height: 25px">{% trans 'Update location' %}</a>
@@ -64,7 +64,7 @@
                     <h4 class="main-title" style="">{% trans "Merchant" %}</h4>
                     <div class="form-group-md">
                         <label for="id-taxpayer">{% trans 'Taxpayer:' %}</label>
-                        <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer" {% if obj.taxpayer %}value="{{ obj.taxpayer }}" {% endif %}>
+                        <input id="id-taxpayer" type="text" class="input-md form-control" name="taxpayer" {% if obj.taxpayer %}value="{{ obj.taxpayer }}{% endif %}">
                         <div class="clearfix"></div>
                     </div>
                     <div class="clearfix"></div>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group-md">
                         <label for="id-company_name">{% trans 'Company name:' %}</label>
-                        <input id="id-company_name" type="text" class="input-md form-control" {% if obj.company_name %}value="{{ obj.company_name }}" {% endif %}>
+                        <input id="id-company_name" type="text" class="input-md form-control" name="company_name" {% if obj.company_name %}value="{{ obj.company_name }}"{% endif %}>
                         <div class="clearfix"></div>
                     </div>
                     <div class="clearfix"></div>
@@ -107,16 +107,16 @@
             companyName = localStorage.getItem('company_name'),
             businessType = localStorage.getItem('business_type'),
             idNumber = localStorage.getItem('id_number');
-            if (taxpayer !== ''){
+            if (taxpayer !== null && taxpayer !== '' && $('#id-taxpayer').val() !== ''){
                 $('#id-taxpayer').val(taxpayer);
             }
-            if (companyName !== '') {
+            if (companyName !== null && companyName !== '' && $('#id-company_name').val() !== '') {
                 $('#id-company_name').val(companyName);
             }
-            if (idNumber !== ''){
+            if (idNumber !== null && idNumber !== '' && $('#id-id_number').val() !== ''){
                 $('#id-id_number').val(idNumber);
             }
-            if (businessType !== '') {
+            if (businessType !== null && businessType !== '' && $('#id-business_type').val() !== '') {
                 $('#id-business_type').val(businessType);
             }
             $('.set-location').on('click', () => {
@@ -126,6 +126,7 @@
                 localStorage.setItem("company_name", $('#id-company_name').val());
                 return;
             });
+            {#$(location).on('change')#}
         })()
     </script>
 {% endblock %}
