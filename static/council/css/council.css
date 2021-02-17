@@ -27,7 +27,7 @@ body {background: #f8f6f6;}
 .description, .description li {font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 18px; color: #445b75}
 .btn {font-weight: 600;font-size: 16px;padding: 8px 40px;height: 45px;margin: 40px 0;line-height: 23px;}
 label{margin-top: 20px}
-
+a:hover {cursor: pointer!important;}
 /*.btn {font-size: 14px;height: 40px;font-weight: 700;}*/
 .pin-here {
     margin: 10px 0;

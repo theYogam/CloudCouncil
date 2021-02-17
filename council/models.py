@@ -37,6 +37,13 @@ class Category(Model):
         return self.name
 
 
+class ActivityCategory(Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Tax(AbstractProduct):
     phone = models.CharField(max_length=60, blank=True, null=True,
                              help_text="Contact phone of support team")
@@ -69,27 +76,32 @@ class PaymentOrder(Model):
 
 class Payment(AbstractPayment):
     member = models.ForeignKey(Member)
-    tax = models.ForeignKey(Tax)
-    status = models.CharField(max_length=100, default=PENDING)
+    model = models.CharField(max_length=24, db_index=True)
+    object_id = models.CharField(max_length=24, db_index=True)
+    status = models.CharField(max_length=100, db_index=True, default=PENDING)
 
     def __unicode__(self):
-        return _("%s of  XAF %s:  %s ") % (self.tax.name, intcomma(self.tax.cost), self.member.full_name)
+        if self.model:
+            return self.model.split('.')[1]
+        return "N/A"
 
 
 class Profile(Model):
-
     member = models.ForeignKey(Member)
-    business_type = models.ForeignKey(Category, null=True, blank=True)
-    location_lat = models.FloatField(default=0.0, null=True, blank=True)
-    location_lng = models.FloatField(default=0.0, null=True, blank=True)
-    formatted_address = models.CharField(max_length=250, default='', null=True, blank=True)
-
-    id_number = models.CharField(_('ID Card Number'), max_length=100)
-    taxpayer = models.CharField(_('Taxpayer Number'),  max_length=100, blank=True, null=True)
-    company_name = models.CharField(_('Company Name'), max_length=100, blank=True, null=True)
+    id_number = models.CharField(_('ID Card Number'), max_length=100, db_index=True)
+    location_lat = models.FloatField(default=0.0, null=True, blank=True, db_index=True)
+    location_lng = models.FloatField(default=0.0, null=True, blank=True, db_index=True)
+    formatted_address = models.CharField(_('Address'), max_length=250, default='', null=True, blank=True)
+    taxpayer = models.CharField(_('Taxpayer Number'),  max_length=100, blank=True, null=True, db_index=True)
+    business_type = models.ForeignKey(Category, verbose_name=_('Business Type'), null=True, blank=True)
+    activity_category = models.ForeignKey(ActivityCategory, verbose_name=_('Activity category'), blank=True, null=True)
+    company_name = models.CharField(_('Company Name'), max_length=100, blank=True, null=True, db_index=True)
 
     def __unicode__(self):
-        return "%s: %s" % (self.business_type, self.member.full_name)
+        return self.member.full_name
+
+    def get_obj_details(self):
+        return self.business_type
 
 
 class Banner(Model):

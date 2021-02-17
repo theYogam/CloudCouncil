@@ -57,7 +57,7 @@ urlpatterns = patterns(
 
 
     # url(r'^home/$', Home.as_view(), name='home'),
-    url(r'^profie/edit$', login_required(EditProfile.as_view()), name='edit_profile'),
+    url(r'^profile/edit$', login_required(EditProfile.as_view()), name='edit_profile'),
     url(r'^maps$', login_required(Maps.as_view()), name='maps'),
     url(r'^receipt/(?P<receipt_id>[-\w]+)/$', login_required(Receipt.as_view()), name='receipt'),
 

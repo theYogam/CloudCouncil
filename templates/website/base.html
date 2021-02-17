@@ -1,19 +1,11 @@
 {% extends "core/base_bs.html" %}
 {% load i18n humanize static auth_tokens  %}
 
-{% block meta %}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="copyright" content="ikwen SARL" >
-
-    <meta property="og:image" content="{% static 'haira/img/logo-haira-about.png' %}" />
-{% endblock %}
 {% block head_style %}
     {{ block.super }}
     <link rel='stylesheet' href="{% static 'website/css/bootstrap-select.min.css' %}" />
     <link rel='stylesheet' href="{% static 'website/css/website.css' %}?V=20.08.30.04.37" />
-    <link rel='stylesheet' href="{% static 'council/css/council.css' %}?V=20.12.17" />
+    <link rel='stylesheet' href="{% static 'council/css/council.css' %}?V=21.02.06" />
     <style>
         .edge-panel-left .wrapper {padding-top: 0}
         body {background: #F6F6F6; font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif}
@@ -63,10 +55,12 @@
                                             <ul class="dropdown-menu has-shade" aria-labelledby="user-menu">
                                                 <li class="username" style="padding: 3px 20px"> {{ user.get_short_name }} </li>
                                                 <li role="separator" class="divider"></li>
-                                                <li>
-                                                    <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
-                                                </li>
-                                                {% if request.user.is_staff %}
+                                                {% if request.user.is_superuser %}
+                                                    <li>
+                                                        <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if user.is_staff %}
                                                     <li>
                                                         <a href="{% url 'pinsview:network' %}">{% trans "Pinsview" %}</a>
                                                     </li>
@@ -150,12 +144,14 @@
                                         <ul class="dropdown-menu has-shade" aria-labelledby="user-menu">
                                             <li class="username" style="padding: 3px 20px"> {{ user.get_short_name }} </li>
                                             <li role="separator" class="divider"></li>
-                                            <li>
-                                                <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
-                                            </li>
+                                            {% if user.is_superuser %}
+                                                <li>
+                                                    <a href="{% url 'ikwen:staff_router' %}">{% trans "Admin" %}</a>
+                                                </li>
+                                            {% endif %}
                                             {% if user.is_staff %}
                                                 <li>
-                                                    <a href="{% url 'pinsview:network' %}">{% trans "Pinpoint asset" %}</a>
+                                                    <a href="{% url 'pinsview:network' %}">{% trans "Pinsview" %}</a>
                                                 </li>
                                             {% endif %}
                                             <li>

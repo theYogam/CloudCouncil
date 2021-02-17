@@ -1,6 +1,11 @@
 {% extends 'website/base.html' %}
 {% load i18n humanize static auth_tokens webdesign media_from_provider %}
 
+{% block meta %}
+    {{ block.super }}
+    <meta property="og:image" content="{% static 'council/img/cameroon-council-logo.png' %}" />
+{% endblock %}
+
 {% block page_title %}
 <title>{{ service.project_name }} - ikwen CloudCouncil</title>
 {% endblock %}
@@ -26,11 +31,11 @@
             </div>
             <div style="margin: 150px 0">
                 <div class="col-sm-6 hidden-xs">
-                    <h3 class="main-title">{% trans 'Digitalize your school and work easier together with Foulassi' %}</h3>
+                    <h3 class="main-title">{% trans 'Digitalize your school and work easier together with Scolarfleet' %}</h3>
                     <div class="description">
                         {% blocktrans %}
                             Built with the idea of collaborative and social platform,
-                            Foulassi lets staffs, teachers and parents connect and work together
+                            Scolarfleet lets staffs, teachers and parents connect and work together
                             to manage the school and students through these following features:
                         {% endblocktrans %}
                         <ul>
@@ -50,11 +55,11 @@
                 <div class="visible-xs">
                     <img class="img-responsive col-sm-6 " src="{% static 'council/img/foulassi-student-follow-up-xs.png' %}" style="">
                     <div class="col-sm-6">
-                        <h3 class="main-title" style="">{% trans 'Digitalize your school and work easier together with Foulassi' %}</h3>
+                        <h3 class="main-title" style="">{% trans 'Digitalize your school and work easier together with Scolarfleet' %}</h3>
                         <div class="description" style="">
                             {% blocktrans %}
                                 Built with the idea of collaborative and social platform,
-                                Foulassi lets staffs, teachers and parents connect and work together
+                                Scolarfleet lets staffs, teachers and parents connect and work together
                                 to manage the school and students through these following features:
                             {% endblocktrans %}
                             <ul>
